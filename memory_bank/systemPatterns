@@ -1,0 +1,45 @@
+# System Patterns
+
+## The prime directive: no narrative injection
+
+Nothing in the system proposes, nudges, or schedules drama. The only exogenous inputs are: initial world content (town layout, agent seeds), the clock, and explicitly-logged experimental treatments (e.g., the seeded fact). If a subsystem's purpose is "make it interesting," it does not belong in POLIS.
+
+## Sim authority and layering
+
+```text
+World state (authoritative, tick-stepped, pure where possible)
+  ▲ validated intents only
+Cognition layer (async, off the critical path)
+  ▲ observations, retrieved memories
+Perception layer (directional witnessing ∧ occlusion ∨ hearing)
+```
+
+- Agents act through **intents** validated against an action grammar (glasshouse pattern). Freeform action strings never mutate world state.
+- Cognition is **fully asynchronous**: agents continue executing their current plan step while LLM calls resolve. The world never blocks on a model.
+- **Interrupt-driven replanning:** observations are importance-scored (fast tier); above threshold, the current plan step is marked interruptible and a react call is dispatched. Below threshold, resolve from the plan cache — this is the cost gate that makes 20+ agents sustainable.
+
+## Cognition stack (Park-faithful, then instrumented)
+
+- **Memory stream:** append-only observation records; every record gets an importance score (fast tier, 1–10) and an embedding at write time.
+- **Retrieval:** score = α·recency (exponential decay on sim-time) + β·importance + γ·relevance (cosine vs. query embedding); α=β=γ=1 normalized, per paper, all three exposed as ablation knobs.
+- **Reflection:** when Σ(importance of recent records) crosses threshold, generate salient questions → retrieve → synthesize insight records citing evidence records (citation edges persisted — they are data for the belief-divergence analysis).
+- **Planning:** morning daily plan (agent summary + yesterday recap → day agenda) → lazy decomposition into hour chunks → 5–15 min action steps, decomposed only when imminent. Plans are memory records and are retrievable.
+- **Dialogue:** turn-based between co-located agents, each turn conditioned on retrieved memories about the interlocutor; conversation summaries written back as observations (this is the diffusion mechanism — do not shortcut it with fact-passing).
+
+## Perception with information asymmetry (from glasshouse P11, ported)
+
+See = same location cell ∧ within sight cone (65° half-angle default) ∧ unoccluded segment. Hear = within hearing radius, occlusion-exempt. Both radii/angles are config, because they are experimental variables (perception constraints are on the ablation list).
+
+## Measurement as a separate plane
+
+Metrics never read sim internals live; they post-process the ledger and the memory store. Probe queries (interviews, fact checks) run against **frozen copies** of agent state and are logged to a probes table — probe traffic must be invisible to the sim. A run is: `config → sim → (ledger, completions, memory) → metrics jobs → experiment record`.
+
+## Service optionality (glasshouse pattern, kept)
+
+- Model gateway down → agents fall back to plan-cache execution and queue cognition (sim slows narratively, never crashes).
+- Embedder down → retrieval degrades to recency+importance, loudly logged (the run is flagged non-conforming).
+- Observer is always optional; headless is the primary mode.
+
+## Contracts
+
+All cross-boundary data (intents, ledger events, memory records, probe results, experiment configs) is JSON-Schema-defined, Ajv-validated in TS, pydantic-mirrored in Python. One repair re-prompt on model output validation failure, then a typed error object (agent_model_service wall, reused).
