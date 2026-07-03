@@ -42,6 +42,7 @@ class World:
                 "name": o["name"],
                 "state": o["state"],
                 "interactions": o["interactions"],
+                "affordances": o["affordances"],
             }
             for l in town["locations"]
             for o in l["objects"]

@@ -38,3 +38,10 @@ Updated: 2026-07-03
 - Objects-with-states: 35 objects authored across all 16 locations (content edit, folded into the pending rejection pass). Deterministic interaction model: each object carries `interactions: {verb: resulting_state}`; `use_object` requires co-location and an allowed verb, transitions state, and emits `object_state_changed`. Schema + validator extended (object ids globally unique, interactions non-empty); mirrors regenerated. Fixture regenerated (content_hash lives in run_started, so content edits move the wall — deliberate).
 - Postgres ledger sink (`services/db/ledger_sink.py`): LedgerWriter on_event hook; registers the run on run_started, batches inserts, marks runs finished on run_finished; `apply_schema()` applies the DDL idempotently. Runner gained `--pg-dsn`. Integration-tested against a throwaway Postgres 16 + pgvector installed in the dev container; tests skip cleanly when no DB is reachable (POLIS_TEST_DSN overrides the default local DSN). JSONL remains the byte-equal wall; Postgres is the queryable copy for the measurement plane.
 - Suite: 83 tests green (3 of them live-DB integration).
+
+## Object inventory rebuilt: generic + affordance-tagged (2026-07-03)
+
+- Compared against Park et al.'s Smallville (46 object types / 19 sectors / 63 arenas / 25 agents): POLIS was proportionally consistent but thin on domestic coverage (no beds, little food-prep). User called it: generic fixtures, full daily-life coverage, leisure + utility both, grounded for future needs.
+- Inventory now 90 objects across all 16 locations. Every object: generic name, deterministic verb→state interactions, `affordances` tags (schema-enforced enum). Coverage: work 32, food 27, social 25, hygiene 15, sleep 14, leisure 13.
+- Guarantees (validator + tests): every agent's home affords sleep+food; every workplace affords work; possessive/agent-owned object names rejected; all six affordance domains present in town.
+- Fixture regenerated (content_hash). Suite: 85 tests green.

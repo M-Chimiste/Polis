@@ -29,21 +29,53 @@
       "objects": [
         {
           "id": "notice_board",
-          "name": "Parish Notice Board",
+          "name": "Notice Board",
           "state": "posted",
           "interactions": {
             "read": "posted",
             "post_notice": "freshly_posted"
-          }
+          },
+          "affordances": [
+            "social"
+          ]
         },
         {
           "id": "handcart",
-          "name": "Common Handcart",
+          "name": "Handcart",
           "state": "empty",
           "interactions": {
             "load": "loaded",
             "unload": "empty"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "trestle_stalls",
+          "name": "Trestle Stalls",
+          "state": "packed_away",
+          "interactions": {
+            "set_up": "set_up",
+            "pack_away": "packed_away"
+          },
+          "affordances": [
+            "work",
+            "social"
+          ]
+        },
+        {
+          "id": "skittle_ground",
+          "name": "Skittle Ground",
+          "state": "pins_scattered",
+          "interactions": {
+            "set_pins": "pins_set",
+            "bowl": "pins_scattered"
+          },
+          "affordances": [
+            "leisure",
+            "social"
+          ]
         }
       ]
     },
@@ -74,7 +106,12 @@
           "interactions": {
             "draw_water": "full",
             "pour_out": "empty"
-          }
+          },
+          "affordances": [
+            "food",
+            "work",
+            "hygiene"
+          ]
         },
         {
           "id": "stone_trough",
@@ -83,7 +120,23 @@
           "interactions": {
             "fill": "full",
             "drain": "empty"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "well_bench",
+          "name": "Bench",
+          "state": "empty",
+          "interactions": {
+            "sit_down": "occupied",
+            "stand_up": "empty"
+          },
+          "affordances": [
+            "leisure",
+            "social"
+          ]
         }
       ]
     },
@@ -111,21 +164,30 @@
       "objects": [
         {
           "id": "perch_hearth",
-          "name": "Taproom Hearth",
+          "name": "Hearth",
           "state": "banked",
           "interactions": {
             "stoke": "lit",
             "bank": "banked"
-          }
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         },
         {
           "id": "ale_barrel",
-          "name": "Autumn Ale Barrel",
+          "name": "Ale Barrel",
           "state": "sealed",
           "interactions": {
             "tap": "tapped",
             "seal": "sealed"
-          }
+          },
+          "affordances": [
+            "food",
+            "leisure",
+            "social"
+          ]
         },
         {
           "id": "guest_ledger",
@@ -134,7 +196,85 @@
           "interactions": {
             "open_ledger": "open",
             "close_ledger": "closed"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "cook_pot",
+          "name": "Cook Pot",
+          "state": "idle",
+          "interactions": {
+            "hang_over_fire": "simmering",
+            "take_off_fire": "idle"
+          },
+          "affordances": [
+            "food",
+            "work"
+          ]
+        },
+        {
+          "id": "long_table",
+          "name": "Long Table",
+          "state": "bare",
+          "interactions": {
+            "lay_table": "laid",
+            "clear_table": "bare"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
+        },
+        {
+          "id": "games_table",
+          "name": "Games Table",
+          "state": "idle",
+          "interactions": {
+            "deal_cards": "in_play",
+            "clear_cards": "idle"
+          },
+          "affordances": [
+            "leisure",
+            "social"
+          ]
+        },
+        {
+          "id": "guest_beds",
+          "name": "Guest Beds",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_beds": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "perch_family_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "wash_tub",
+          "name": "Wash Tub",
+          "state": "empty",
+          "interactions": {
+            "fill_tub": "full",
+            "empty_tub": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
         }
       ]
     },
@@ -165,7 +305,11 @@
           "interactions": {
             "fire": "fired",
             "rake_out": "cold"
-          }
+          },
+          "affordances": [
+            "food",
+            "work"
+          ]
         },
         {
           "id": "kneading_table",
@@ -174,7 +318,60 @@
           "interactions": {
             "knead": "floured",
             "scrub": "clean"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "flour_bin",
+          "name": "Flour Bin",
+          "state": "full",
+          "interactions": {
+            "scoop": "low",
+            "fill_bin": "full"
+          },
+          "affordances": [
+            "work",
+            "food"
+          ]
+        },
+        {
+          "id": "bakery_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "bakery_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "bakery_table",
+          "name": "Table",
+          "state": "bare",
+          "interactions": {
+            "lay_table": "laid",
+            "clear_table": "bare"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -205,7 +402,10 @@
           "interactions": {
             "stoke": "roaring",
             "bank": "banked"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
         },
         {
           "id": "anvil",
@@ -214,7 +414,10 @@
           "interactions": {
             "work_metal": "ringing",
             "set_down": "idle"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
         },
         {
           "id": "quench_barrel",
@@ -223,7 +426,59 @@
           "interactions": {
             "quench": "steaming",
             "refill": "full"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "smithy_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "smithy_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "smithy_kettle",
+          "name": "Kettle",
+          "state": "idle",
+          "interactions": {
+            "set_boiling": "boiling",
+            "take_off": "idle"
+          },
+          "affordances": [
+            "food"
+          ]
+        },
+        {
+          "id": "smithy_table",
+          "name": "Table",
+          "state": "bare",
+          "interactions": {
+            "lay_table": "laid",
+            "clear_table": "bare"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -253,16 +508,70 @@
           "interactions": {
             "open_shop": "open",
             "shutter": "shuttered"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
         },
         {
           "id": "stock_shelves",
-          "name": "Stockroom Shelves",
+          "name": "Stock Shelves",
           "state": "stocked",
           "interactions": {
             "pick_stock": "picked_over",
             "restock": "stocked"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "store_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "store_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "store_kettle",
+          "name": "Kettle",
+          "state": "idle",
+          "interactions": {
+            "set_boiling": "boiling",
+            "take_off": "idle"
+          },
+          "affordances": [
+            "food"
+          ]
+        },
+        {
+          "id": "reading_chair",
+          "name": "Reading Chair",
+          "state": "empty",
+          "interactions": {
+            "sit_down": "occupied",
+            "stand_up": "empty"
+          },
+          "affordances": [
+            "leisure"
+          ]
         }
       ]
     },
@@ -288,12 +597,15 @@
       "objects": [
         {
           "id": "drying_rack",
-          "name": "Herb Drying Rack",
+          "name": "Drying Rack",
           "state": "hung_with_herbs",
           "interactions": {
             "hang_herbs": "hung_with_herbs",
             "strip_herbs": "bare"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
         },
         {
           "id": "still_pot",
@@ -302,7 +614,60 @@
           "interactions": {
             "set_simmering": "simmering",
             "cool": "idle"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "herb_garden",
+          "name": "Herb Garden",
+          "state": "tended",
+          "interactions": {
+            "tend": "tended",
+            "let_grow": "overgrown"
+          },
+          "affordances": [
+            "work",
+            "food"
+          ]
+        },
+        {
+          "id": "marsh_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "marsh_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "marsh_hearth",
+          "name": "Hearth",
+          "state": "banked",
+          "interactions": {
+            "stoke": "lit",
+            "bank": "banked"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -328,12 +693,16 @@
       "objects": [
         {
           "id": "chapel_bell",
-          "name": "Chapel Bell",
+          "name": "Bell",
           "state": "silent",
           "interactions": {
             "ring": "just_rung",
             "let_still": "silent"
-          }
+          },
+          "affordances": [
+            "social",
+            "work"
+          ]
         },
         {
           "id": "lectern",
@@ -342,7 +711,61 @@
           "interactions": {
             "open_book": "book_open",
             "close_book": "book_closed"
-          }
+          },
+          "affordances": [
+            "work",
+            "social"
+          ]
+        },
+        {
+          "id": "chapel_benches",
+          "name": "Benches",
+          "state": "ordered",
+          "interactions": {
+            "sit_down": "occupied",
+            "straighten": "ordered"
+          },
+          "affordances": [
+            "social",
+            "leisure"
+          ]
+        },
+        {
+          "id": "vestry_cot",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "vestry_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "vestry_hearth",
+          "name": "Hearth",
+          "state": "banked",
+          "interactions": {
+            "stoke": "lit",
+            "bank": "banked"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -374,7 +797,10 @@
           "interactions": {
             "engage": "turning",
             "disengage": "still"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
         },
         {
           "id": "grain_hopper",
@@ -383,7 +809,10 @@
           "interactions": {
             "fill_hopper": "full",
             "run_through": "empty"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
         },
         {
           "id": "sluice_gate",
@@ -392,7 +821,46 @@
           "interactions": {
             "open_gate": "open",
             "close_gate": "closed"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "mill_loft_cot",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "mill_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "mill_stove",
+          "name": "Stove",
+          "state": "cold",
+          "interactions": {
+            "light_stove": "burning",
+            "damp_down": "cold"
+          },
+          "affordances": [
+            "food"
+          ]
         }
       ]
     },
@@ -424,7 +892,11 @@
             "till": "tilled",
             "sow": "sown",
             "leave_fallow": "fallow"
-          }
+          },
+          "affordances": [
+            "work",
+            "food"
+          ]
         },
         {
           "id": "cow_byre",
@@ -433,7 +905,61 @@
           "interactions": {
             "feed_animals": "fed",
             "muck_out": "mucked"
-          }
+          },
+          "affordances": [
+            "work",
+            "food"
+          ]
+        },
+        {
+          "id": "farm_beds",
+          "name": "Beds",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_beds": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "farm_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "farm_hearth",
+          "name": "Hearth",
+          "state": "banked",
+          "interactions": {
+            "stoke": "lit",
+            "bank": "banked"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
+        },
+        {
+          "id": "farm_table",
+          "name": "Table",
+          "state": "bare",
+          "interactions": {
+            "lay_table": "laid",
+            "clear_table": "bare"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -461,7 +987,10 @@
           "interactions": {
             "weave": "mid_weave",
             "tie_off": "warped"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
         },
         {
           "id": "spinning_wheel",
@@ -470,7 +999,59 @@
           "interactions": {
             "spin": "spinning",
             "stop_wheel": "idle"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "fireside_chair",
+          "name": "Fireside Chair",
+          "state": "empty",
+          "interactions": {
+            "sit_down": "occupied",
+            "stand_up": "empty"
+          },
+          "affordances": [
+            "leisure"
+          ]
+        },
+        {
+          "id": "weaver_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "weaver_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "weaver_hearth",
+          "name": "Hearth",
+          "state": "banked",
+          "interactions": {
+            "stoke": "lit",
+            "bank": "banked"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -495,12 +1076,15 @@
       "objects": [
         {
           "id": "wood_stove",
-          "name": "Wood Stove",
+          "name": "Stove",
           "state": "cold",
           "interactions": {
             "light_stove": "burning",
             "damp_down": "cold"
-          }
+          },
+          "affordances": [
+            "food"
+          ]
         },
         {
           "id": "workbench",
@@ -509,7 +1093,47 @@
           "interactions": {
             "work_at": "cluttered",
             "tidy": "ordered"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "fishing_rod",
+          "name": "Fishing Rod",
+          "state": "stowed",
+          "interactions": {
+            "take_out": "in_use",
+            "hang_up": "stowed"
+          },
+          "affordances": [
+            "leisure",
+            "food"
+          ]
+        },
+        {
+          "id": "cabin_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "cabin_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
         }
       ]
     },
@@ -537,16 +1161,60 @@
           "interactions": {
             "open_desk": "spread_with_papers",
             "close_desk": "closed"
-          }
+          },
+          "affordances": [
+            "work",
+            "leisure"
+          ]
+        },
+        {
+          "id": "bookshelf",
+          "name": "Bookshelf",
+          "state": "full",
+          "interactions": {
+            "take_book": "thinned",
+            "shelve_book": "full"
+          },
+          "affordances": [
+            "leisure"
+          ]
+        },
+        {
+          "id": "fenn_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "fenn_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
         },
         {
           "id": "fenn_hearth",
-          "name": "Kitchen Hearth",
+          "name": "Hearth",
           "state": "banked",
           "interactions": {
             "stoke": "lit",
             "bank": "banked"
-          }
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -571,12 +1239,15 @@
       "objects": [
         {
           "id": "strongbox",
-          "name": "Reeve's Strongbox",
+          "name": "Strongbox",
           "state": "locked",
           "interactions": {
             "unlock": "unlocked",
             "lock": "locked"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
         },
         {
           "id": "accounts_desk",
@@ -585,7 +1256,60 @@
           "interactions": {
             "spread_accounts": "spread_with_accounts",
             "clear_desk": "cleared"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "hearth_settle",
+          "name": "Hearth Settle",
+          "state": "empty",
+          "interactions": {
+            "sit_down": "occupied",
+            "stand_up": "empty"
+          },
+          "affordances": [
+            "leisure",
+            "social"
+          ]
+        },
+        {
+          "id": "dunn_bed",
+          "name": "Bed",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_bed": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "dunn_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "dunn_hearth",
+          "name": "Hearth",
+          "state": "banked",
+          "interactions": {
+            "stoke": "lit",
+            "bank": "banked"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -613,7 +1337,11 @@
           "interactions": {
             "lay_table": "laid",
             "clear_table": "bare"
-          }
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         },
         {
           "id": "linen_chest",
@@ -622,7 +1350,60 @@
           "interactions": {
             "open_chest": "open",
             "close_chest": "closed"
-          }
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "fiddle",
+          "name": "Fiddle",
+          "state": "hung",
+          "interactions": {
+            "take_up": "being_played",
+            "hang_up": "hung"
+          },
+          "affordances": [
+            "leisure",
+            "social"
+          ]
+        },
+        {
+          "id": "ferrin_beds",
+          "name": "Beds",
+          "state": "made",
+          "interactions": {
+            "turn_down": "turned_down",
+            "make_beds": "made"
+          },
+          "affordances": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "ferrin_wash_basin",
+          "name": "Wash Basin",
+          "state": "empty",
+          "interactions": {
+            "fill_basin": "full",
+            "empty_basin": "empty"
+          },
+          "affordances": [
+            "hygiene"
+          ]
+        },
+        {
+          "id": "ferrin_hearth",
+          "name": "Hearth",
+          "state": "banked",
+          "interactions": {
+            "stoke": "lit",
+            "bank": "banked"
+          },
+          "affordances": [
+            "food",
+            "social"
+          ]
         }
       ]
     },
@@ -653,16 +1434,36 @@
           "interactions": {
             "pick_apples": "picked_over",
             "let_ripen": "laden"
-          }
+          },
+          "affordances": [
+            "food",
+            "work"
+          ]
         },
         {
           "id": "orchard_ladder",
-          "name": "Orchard Ladder",
+          "name": "Ladder",
           "state": "stowed",
           "interactions": {
             "set_ladder": "against_tree",
             "stow_ladder": "stowed"
-          }
+          },
+          "affordances": [
+            "work"
+          ]
+        },
+        {
+          "id": "grassy_bank",
+          "name": "Grassy Bank",
+          "state": "empty",
+          "interactions": {
+            "sit_down": "occupied",
+            "stand_up": "empty"
+          },
+          "affordances": [
+            "leisure",
+            "social"
+          ]
         }
       ]
     }

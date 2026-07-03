@@ -40,13 +40,21 @@ for l in town["locations"]:
 
 # --- objects ---
 seen_objects = {}
+loc_affordances = {}
 for l in town["locations"]:
+    afford = set()
     for o in l.get("objects", []):
         if o["id"] in seen_objects:
             errors.append(f"object id '{o['id']}' duplicated in {seen_objects[o['id']]} and {l['id']}")
         seen_objects[o["id"]] = l["id"]
         if not o.get("interactions"):
             errors.append(f"object {o['id']}: no interactions")
+        if not o.get("affordances"):
+            errors.append(f"object {o['id']}: no affordances")
+        if "'s " in o.get("name", ""):
+            errors.append(f"object {o['id']}: name '{o['name']}' looks agent-owned; objects are generic fixtures")
+        afford.update(o.get("affordances", []))
+    loc_affordances[l["id"]] = afford
 
 ids = list(rects)
 for i, a in enumerate(ids):
@@ -72,6 +80,11 @@ for stem, a in agents.items():
             errors.append(f"agent {a['id']}: daily_anchors.{k} '{v}' is not HH:MM")
     if not a.get("bio") or not a.get("initial_memories"):
         errors.append(f"agent {a['id']}: missing bio or initial_memories")
+    for need in ("sleep", "food"):
+        if a["home"] in loc_affordances and need not in loc_affordances[a["home"]]:
+            errors.append(f"agent {a['id']}: home '{a['home']}' has no object affording '{need}'")
+    if a["workplace"] in loc_affordances and "work" not in loc_affordances[a["workplace"]]:
+        errors.append(f"agent {a['id']}: workplace '{a['workplace']}' has no object affording 'work'")
 
 # --- relationships ---
 seen_pairs = set()

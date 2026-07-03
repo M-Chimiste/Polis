@@ -33,6 +33,28 @@ def test_agent_refs_resolve_to_locations_and_agents():
         assert e["a"] in agents and e["b"] in agents
 
 
+def test_needs_grounding_coverage():
+    """Every home affords sleep+food; every workplace affords work; the town
+    has leisure. This is what the future needs system grounds against."""
+    town = load_town()
+    affordances = {
+        l["id"]: {a for o in l["objects"] for a in o["affordances"]}
+        for l in town["locations"]
+    }
+    for agent in load_agents().values():
+        assert {"sleep", "food"} <= affordances[agent["home"]], agent["id"]
+        assert "work" in affordances[agent["workplace"]], agent["id"]
+    all_affordances = set().union(*affordances.values())
+    assert all_affordances == {"sleep", "food", "hygiene", "leisure", "social", "work"}
+
+
+def test_objects_are_generic_fixtures():
+    town = load_town()
+    for l in town["locations"]:
+        for o in l["objects"]:
+            assert "'s " not in o["name"], f"{o['id']}: '{o['name']}' looks agent-owned"
+
+
 def test_standalone_validator_passes():
     proc = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "validate_content.py")],

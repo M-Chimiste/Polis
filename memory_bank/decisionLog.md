@@ -91,3 +91,9 @@ Reason: Service-optionality pattern made structural: gateway-down must degrade t
 Decision: memory_records.embedding is vector(768) — a modern BERT-class embedder. And the DDL/tooling assume "any Postgres with pgvector", not Nyx specifically; Nyx remains the default home but is not a dependency of the schema or the code.
 
 Reason: User call. 768 fixes the migration-sensitive choice now instead of carrying a placeholder into P2; decoupling from Nyx keeps the sim host-portable (the only hard dependencies stay HTTP reach to the gateway and a Postgres URL).
+
+## 2026-07-03 — Objects are generic affordance-tagged fixtures; needs get grounded in content
+
+Decision: Objects are generic fixtures of a location ("Bed", "Hearth", "Strongbox"), never personalized to an agent (validator rejects possessive names). Every object carries `affordances` ⊆ {sleep, food, hygiene, leisure, social, work} — the grounding layer for a future agent-needs system. Coverage is validator-enforced: every agent's home must afford sleep and food; every workplace must afford work.
+
+Reason: User call. Generic fixtures keep ownership/meaning emergent (an agent's attachment to a bed should come from memories, not labels), daily-life + leisure + utility coverage lets P2 plan decomposition ground morning/evening/leisure steps in real `use_object` targets, and affordance tags give the needs system a contract instead of string-matching object names later.

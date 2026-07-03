@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from enum import Enum
+
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -31,6 +33,15 @@ class DoorItem(RootModel[conint(ge=0)]):
     root: conint(ge=0)
 
 
+class Affordance(Enum):
+    sleep = "sleep"
+    food = "food"
+    hygiene = "hygiene"
+    leisure = "leisure"
+    social = "social"
+    work = "work"
+
+
 class Object(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -38,11 +49,14 @@ class Object(BaseModel):
     id: constr(pattern=r"^[a-z0-9_]+$") = Field(
         ..., description="globally unique across the town"
     )
-    name: constr(min_length=1)
+    name: constr(min_length=1) = Field(
+        ..., description="generic fixture name (e.g. 'Bed', 'Hearth'), not agent-owned"
+    )
     state: constr(pattern=r"^[a-z0-9_]+$")
     interactions: dict[
         constr(pattern=r"^[a-z0-9_]+$"), constr(pattern=r"^[a-z0-9_]+$")
     ] = Field(..., min_length=1)
+    affordances: list[Affordance] = Field(..., min_length=1)
 
 
 class Location(BaseModel):
@@ -71,7 +85,7 @@ class Location(BaseModel):
     tags: list[str]
     objects: list[Object] = Field(
         ...,
-        description="Objects-with-states. interactions maps an allowed verb to the resulting state — the only way object state changes, and it is deterministic.",
+        description="Objects-with-states: generic fixtures of a location, never personalized to an agent. interactions maps an allowed verb to the resulting state — the only way object state changes, and it is deterministic. affordances tag which needs the object can serve (grounding for the future needs system).",
     )
 
 
