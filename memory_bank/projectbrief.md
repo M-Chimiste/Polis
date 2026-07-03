@@ -16,7 +16,7 @@ POLIS is glasshouse's sibling, not its sequel. Glasshouse is a show; POLIS is an
 
 - Not a broadcast product. No TTS, no captions-as-drama, no episode structure. (A stream mode may exist later as a pure observer.)
 - Not a game. No win states, no viewer commands.
-- Not glasshouse with the director turned off — it is a new spine that imports specific glasshouse parts.
+- Not glasshouse with the director turned off — it is a from-scratch build that reimplements a few proven glasshouse patterns.
 
 ## Success criteria (v1)
 
@@ -24,13 +24,13 @@ POLIS is glasshouse's sibling, not its sequel. Glasshouse is a show; POLIS is an
 2. Same experiment run with retrieval scoring ablated (salience-only) shows a measurable difference — the publishable knob.
 3. A full sim-week of 20 agents runs unattended on local hardware with logged-completion replay.
 
-## Salvage manifest (from glasshouse)
+## Glasshouse relationship: reference-only, zero code import
 
-- `services/agent_model_service` — wholesale: validation wall, structured outputs, dual-hardware profiles.
-- `services/memory_service` — persistence layer; retrieval logic replaced.
-- Schema/contract discipline (Ajv for contract files, Zod for app logic).
-- P11 perception model (sight cone ∧ occlusion ∨ hearing radius) — ported, not copied, into the new sim core.
+POLIS is built from scratch (decision 2026-07-03): no glasshouse code crosses over, ensuring nothing show-shaped survives by accident. Glasshouse remains a **design reference** for proven patterns that get reimplemented clean:
 
-## Explicitly deleted
+- Model gateway pattern: validation wall, structured outputs, one repair re-prompt, named hardware profiles.
+- P11 perception semantics: sight cone ∧ occlusion ∨ hearing radius.
+- Schema/contract discipline (Ajv for contract files, Zod for app logic; pydantic mirrors).
+- The byte-equal legacy-replay fixture pattern.
 
-Appraisal system, stimulus emitter, scenario manager, template/model director, broadcast layer, viewer systems, TTS, trials/dreams/laws-as-content, Art Forge.
+Everything director-, scenario-, broadcast-, or viewer-shaped is not referenced at all.
