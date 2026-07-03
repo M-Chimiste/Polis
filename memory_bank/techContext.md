@@ -15,14 +15,16 @@
 
 | Node | Role |
 |---|---|
-| Mnemosyne (2× RTX PRO 6000 Blackwell) | vLLM serving: fast tier tp=1 on GPU0, slow tier tp=1 on GPU1 (or tp=2 for a single larger model — measure both). SLURM arbitration already in place. |
-| Nyx (Mac mini) | Postgres + pgvector, embedder, sim process (or sim on Mnemosyne CPU — Threadripper is fine), metrics jobs |
-| Athena/Metis (M3 Ultra) | Overflow/alternate serving profile (MLX) — the agent_model_service dual-hardware profiles carry over |
+| Mnemosyne (2× RTX PRO 6000 Blackwell) | **Inference server, exclusively.** vLLM: fast tier tp=1 on GPU0, slow tier tp=1 on GPU1 (or tp=2 for a single larger model — measure both). SLURM arbitration already in place. |
+| Athena or Metis (M3 Ultra) | **Sim host** (primary): sim process + probe runner + metrics jobs. Sim must be host-portable — any Mac or Linux box over Tailscale can run it; the only hard dependency is HTTP reach to the gateway and Postgres. |
+| Nyx (Mac mini) | Postgres + pgvector, embedder |
 | Aletheia | Run archive: completion logs + ledgers per experiment |
 
 Networking: Tailscale, as everywhere.
 
 ## Model tiers (initial; all swappable via config)
+
+Sampling parameters (temperature, top_p, top_k, min_p, max_tokens, reasoning budget) are **configurable per model per role** in the serving/gateway config — no global sampling policy, no temperature-0 requirement anywhere. The experiment config hash covers sampling params, so conditions with different sampling are distinct experiments by construction.
 
 - **Fast tier** (dialogue turns, importance scoring, action selection within plan): Qwen3-class 8B, structured outputs, high concurrency.
 - **Slow tier** (reflection synthesis, daily planning, plan decomposition): 32–70B class, batched, low priority. Reasoning budget capped server-side at vLLM launch (the glasshouse qwen3.6 lesson: request-level enable_thinking may be ignored; cap at the server).
@@ -34,4 +36,4 @@ Sampling is allowed (temperature > 0) — behavioral diversity is the point. Det
 
 ## Dev environment
 
-Repo on Mnemosyne (Ubuntu stack already configured: Docker, uv, miniforge). uv-managed Python. Observer dev via Vite as usual.
+Repo developed and sim run from a Mac (Athena/Metis primary); Mnemosyne touched only for serving profiles. uv-managed Python. Observer dev via Vite as usual.
