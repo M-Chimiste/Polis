@@ -1,6 +1,6 @@
 # POLIS — MASTER PLAN
 
-**Current phase:** P0 in progress — software half done, hardware half (Nyx/Mnemosyne) pending · **Last updated:** 2026-07-03
+**Current phase:** P1 world core built, gate met (byte-equal fixture) · P0 hardware tasks deferred (user call: no live-LLM/DB work from remote sessions) · **Last updated:** 2026-07-03
 
 Plan-of-record. `memory_bank/` is the state-of-record for narrative and decisions. Same operating protocol as glasshouse: read MEMORY_BANK context before any task; after any task update phase boxes, phase log, dashboard, activeContext/progress/decisionLog; run tests; one commit per coherent work item.
 
@@ -30,11 +30,11 @@ boot   world  minds  measure│first  ablate
 ## P1 — World core (gate: byte-equal ledger fixture across two headless runs, no LLM)
 
 - [x] Town spec: **DONE at inception** — generated once via `scripts/generate_content.py`, frozen as static `content/town.json` (Harrowmere, 16 locations, 48×48). Objects-with-states still to populate.
-- [ ] Tick loop: pure world step, seeded PRNG streams per subsystem, A*/grid pathfinding, co-location cells.
-- [ ] Intent grammar + validator: move_to, use_object, converse_with(request/accept/decline), idle, sleep.
-- [ ] Perception, from scratch to P11 semantics: sight cone ∧ occlusion ∨ hearing radius; all parameters in config.
-- [ ] Scripted-agent mode (FSM stand-ins) to exercise the loop without models.
-- [ ] Ledger stream: Postgres persistence + WebSocket sidecar; legacy-replay fixture established (the permanent wall).
+- [x] Tick loop: deterministic world step (`sim/world.py`), seeded PRNG streams per subsystem (`sim/rng.py`, plumbed; scripted mode draws nothing yet — pinned by test), A* pathfinding with fixed tie-breaks (`sim/grid.py`), co-location.
+- [x] Intent grammar + validator: move_to, use_object, converse_with(request/accept/decline), idle, sleep — schema wall + world-semantic checks; rejects land in the ledger as `intent_rejected`.
+- [x] Perception, from scratch to P11 semantics: sight cone ∧ occlusion ∨ hearing radius (`sim/perception.py`); all parameters config (`experiment_config.perception`).
+- [x] Scripted-agent mode (FSM stand-ins, anchor-driven) — a full sim-day: 20 agents wake, commute, work, return, sleep; zero rejections.
+- [x] Ledger stream: canonical JSONL writer + WebSocket sidecar (`sim/stream.py`, zero authority); **byte-equal replay fixture established** (`tests/fixtures/ledger_scripted_seed42_3000.jsonl` — the permanent wall). **Pending: Postgres persistence sink (deferred with the other hardware tasks).**
 
 ## P2 — Cognition (gate: 5 agents live a coherent unscripted day; every completion logged and replayable)
 

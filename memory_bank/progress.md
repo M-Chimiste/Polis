@@ -23,3 +23,12 @@ Updated: 2026-07-03
 - Postgres DDL `services/db/schema.sql` (runs/agents/ledger_events/memory_records/plans/completions/probes/metrics, pgvector; embedding vector(768), BERT-class, host-agnostic). Mnemosyne serving profile records in `services/serving/mnemosyne/`.
 - `sim/content.py`: schema-validating content loaders + content_hash() (sha256 over content/) for experiment_config.
 - Gate progress: `uv run pytest` green — 48 tests (content wall, intent grammar accept/reject, contract fixtures, gateway success/repair/double-fail/transport/logging, mirror parity). Full P0 gate still needs the Nyx/Mnemosyne hardware tasks.
+
+## P1 world core built, gate met (2026-07-03)
+
+- Standing constraint recorded: remote-session development only — no live LLM or database connectivity; mocks/fixtures everywhere. Hardware tasks batched for Christian.
+- `sim/`: deterministic tick loop (`world.py` — intents are the only mutation path, sorted-order processing), A* with fixed tie-breaks + door-priority `locate()` (`grid.py`), seeded per-subsystem PRNG streams (`rng.py`), P11 perception (`perception.py` — cone ∧ occlusion ∨ hearing, occlusion-exempt hearing, all params config), anchor-driven scripted FSM agents (`scripted.py`), canonical JSONL ledger writer (`ledger.py`), headless runner CLI (`runner.py`), zero-authority WebSocket sidecar (`stream.py`, FastAPI).
+- **P1 gate met:** two headless runs byte-equal; fixture committed (`tests/fixtures/ledger_scripted_seed42_3000.jsonl`, 127 events, seed 42, 3000 ticks). A full sim-day: 20 agents wake/commute/work/return/sleep, 5 commuters, zero intent rejections.
+- Bug caught by the gate work: door cells can lie on a neighbouring rect's edge; `locate()` now resolves doors first and treats rect membership as strictly interior (perimeter = walls, nobody's floor).
+- Remaining P1: objects-with-states in town.json; Postgres ledger sink (hardware-batched).
+- Suite: 79 tests green.

@@ -4,7 +4,11 @@ Updated: 2026-07-03
 
 ## Current state
 
-P0 in progress. The software half of the bootstrap exists and `pytest` is green (48 tests): uv project scaffold (`sim/`, `cognition/`, `metrics/`, `observer/`, `schemas/`, `services/`), schemas v0 with generated pydantic mirrors, model gateway implemented and unit-tested against a mocked OpenAI-compatible endpoint, Postgres DDL and vLLM serving profiles recorded in-repo. The hardware half remains: apply `services/db/schema.sql` on Nyx, launch the serving profiles on Mnemosyne, smoke the gateway from the sim host.
+P1 world core built and its gate met: byte-equal ledger fixture across headless runs, no LLM (`tests/fixtures/ledger_scripted_seed42_3000.jsonl` is the permanent wall). `pytest` green — 79 tests. Working: deterministic tick loop, A* pathfinding, intent grammar wall with semantic rejection, P11 perception (cone ∧ occlusion ∨ hearing, all config), scripted FSM agents living coherent anchor-driven days, canonical JSONL ledger + zero-authority WebSocket sidecar.
+
+P0's software half is also done (scaffold, schemas v0 + mirrors, gateway vs mocked endpoint, DDL, serving profile records).
+
+**Standing constraint (user, 2026-07-03): development happens from remote sessions — do not attempt live LLM connectivity or real database access; everything is built and tested against mocks/fixtures.** Hardware tasks (Postgres apply, Mnemosyne profile launch, gateway smoke, Postgres ledger sink) are batched for Christian to run from the home network later.
 
 ## Current focus
 
@@ -18,12 +22,15 @@ Open fork still awaiting a call:
 
 ## Immediate next action
 
-Still pending from before: content rejection pass (Christian — names, tone, tension seeds).
+Buildable from remote (no LLM/DB needed):
 
-P0 hardware tasks (need Tailscale access to the boxes; can't run from a cloud session):
+- P1 leftovers: populate objects-with-states in `content/town.json`; Postgres ledger sink can be written but not integration-tested (defer).
+- P2 cognition against the mocked gateway: memory stream write path, R×I×R retrieval scorer (pgvector-backed in prod, in-memory for tests), plan-cache runtime, logged-completion replay mode — replay is by construction testable without a model.
+- P3 metrics over the committed ledger fixture; P4 observer against exported ledger JSONL.
 
-1. Any Postgres with pgvector (Nyx is the default home, not a dependency — decision 2026-07-03): create the `polis` database, apply `services/db/schema.sql` (embedding dim 768, BERT-class, decided).
-2. Mnemosyne: launch fast/slow tiers per `services/serving/mnemosyne/*.yaml` through the vLLM manager, reconcile those records with the manager's real config format, confirm the proxy base_url in `services/serving/profiles.yaml`.
-3. Sim host (Mac): run a gateway smoke test against the live proxy (structured output + repair path against a real model). That closes P0.
+Batched for Christian (home network):
 
-Then P1: tick loop, intent validator wired to `agent_intent.schema.json`, perception, scripted-agent mode, ledger stream.
+1. Content rejection pass (names, tone, tension seeds) — still pending.
+2. Postgres with pgvector anywhere: apply `services/db/schema.sql` (768-dim, decided).
+3. Mnemosyne: launch fast/slow vLLM tiers per `services/serving/mnemosyne/*.yaml`; confirm proxy base_url in `profiles.yaml`.
+4. Gateway smoke from the sim host against the live proxy. Closes P0.
