@@ -25,6 +25,8 @@ from cognition.planning import (
 from cognition.retrieval import RetrievalParams, retrieve
 from services.gateway import GatewayCompletion
 from sim.clock import TICKS_PER_DAY, in_window, minute_of_day, parse_hhmm
+
+TICKS_PER_HOUR = 360
 from sim.perception import PerceptionParams, perceive
 from sim.world import World
 
@@ -34,9 +36,11 @@ DEFAULT_IMPORTANCE = 5  # used when the importance call fails (gateway down)
 
 @dataclass
 class Settings:
+    # defaults are fake-era calibrations; real-model runs set these in the
+    # experiment config (they are ablation knobs, not constants)
     retrieval: RetrievalParams = field(default_factory=RetrievalParams)
     perception: PerceptionParams = field(default_factory=PerceptionParams)
-    interrupt_importance_threshold: int = 6
+    interrupt_importance_threshold: int = 4
     reflection_importance_sum_threshold: float = 60.0
     max_conversation_turns: int = 4
 
@@ -216,11 +220,22 @@ class CognitionRuntime:
         speaker_mind = self.minds[conv.speaker]
         listener = conv.other(conv.speaker)
         events: list[Event] = []
+        # context = memories about the interlocutor PLUS the most salient
+        # recent memories regardless of topic — salient news gets said even
+        # when it isn't about the partner (the gossip/diffusion channel)
+        about = retrieve(speaker_mind.stream, self.embedder, listener,
+                         self.world.tick, self.settings.retrieval)
+        day_ago = self.world.tick - TICKS_PER_DAY
+        recent = [r for r in speaker_mind.stream.records if r["tick"] >= day_ago]
+        salient_news = sorted(recent, key=lambda r: (-r["importance"], -r["tick"]))[:2]
+        seen_ids = {r["id"] for r in about}
+        retrieved = about + [r for r in salient_news if r["id"] not in seen_ids]
         result = await self._call(
             conv.speaker, "dialogue_turn", "dialogue",
-            prompts.dialogue_turn_prompt(speaker_mind.seed, listener, conv.turn,
-                                         self._retrieved_texts(speaker_mind, listener),
-                                         conv.history))
+            prompts.dialogue_turn_prompt(
+                speaker_mind.seed, listener, conv.turn,
+                [{"text": r["text"], "importance": r["importance"]} for r in retrieved],
+                conv.history))
         if isinstance(result, GatewayCompletion):
             text = result.content
         else:
@@ -307,8 +322,11 @@ class CognitionRuntime:
             elif kind == "conversation_started":
                 initiator = data["partner"]
                 conv = Conversation(initiator=initiator, partner=agent_id, speaker=initiator)
-                if self.minds[initiator].conversation is None and \
-                        self.minds[agent_id].conversation is None:
+                both_free = (self.minds[initiator].conversation is None
+                             and self.minds[agent_id].conversation is None)
+                both_awake = (world.agents[initiator].status != "sleeping"
+                              and world.agents[agent_id].status != "sleeping")
+                if both_free and both_awake:
                     self.minds[initiator].conversation = conv
                     self.minds[agent_id].conversation = conv
 
@@ -334,6 +352,15 @@ class CognitionRuntime:
                 where = world.location_of(aid) or "the lanes"
                 record = await self._observe(mind, f"saw {other} at {where}")
                 salient.append(record)
+            if world.tick % TICKS_PER_HOUR == 0:
+                # hourly re-observation of the still-present: cohabitants who
+                # never move would otherwise get one react chance per day
+                hour = world.tick // TICKS_PER_HOUR
+                for other in sorted(seen & mind.last_seen):
+                    where = world.location_of(aid) or "the lanes"
+                    record = await self._observe(
+                        mind, f"spent time with {other} at {where} (hour {hour})")
+                    salient.append(record)
             mind.last_seen = seen
 
             # -- incoming conversation request: accept unless busy
@@ -348,6 +375,14 @@ class CognitionRuntime:
             # -- active conversation: one utterance per tick, speaker's pass
             if mind.conversation is not None:
                 conv = mind.conversation
+                other = conv.other(aid)
+                if (self.minds[other].conversation is not conv
+                        or world.agents[other].status == "sleeping"):
+                    # partner detached or asleep: wind the conversation down
+                    if id(conv) not in handled_conversations:
+                        handled_conversations.add(id(conv))
+                        cognition_events.extend(await self._end_conversation(conv))
+                    continue
                 if id(conv) not in handled_conversations and conv.speaker == aid:
                     handled_conversations.add(id(conv))
                     cognition_events.extend(await self._dialogue_turn(conv))

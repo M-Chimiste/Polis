@@ -25,7 +25,7 @@ class RetrievalParams:
     alpha: float = 1.0
     beta: float = 1.0
     gamma: float = 1.0
-    recency_decay: float = 0.995  # per sim-minute
+    recency_decay: float = 0.995  # per sim-HOUR (Park's calibration)
     top_k: int = 5
 
 
@@ -43,8 +43,8 @@ def retrieve(stream: MemoryStream, embedder: Embedder, query: str,
     query_emb = embedder.embed([query])[0]
     recency, importance, relevance = [], [], []
     for r in stream.records:
-        age_minutes = max(0, now_tick - r["tick"]) * TICK_SIM_SECONDS / 60
-        recency.append(params.recency_decay ** age_minutes)
+        age_hours = max(0, now_tick - r["tick"]) * TICK_SIM_SECONDS / 3600
+        recency.append(params.recency_decay ** age_hours)
         importance.append(float(r["importance"]))
         relevance.append(cosine(query_emb, stream.embeddings[r["id"]]))
     rec_n, imp_n, rel_n = _normalize(recency), _normalize(importance), _normalize(relevance)

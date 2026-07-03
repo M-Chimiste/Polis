@@ -109,3 +109,21 @@ Reason: Replay is the reproducibility mechanism; it only works if the Nth call p
 Decision: The deterministic fake model (cognition/fake_model.py) and HashEmbedder (cognition/embedding.py) exist so the whole stack runs offline under the remote constraint, driving the real gateway/validation/logging path. Any run using either is non-conforming and can never be an experiment; the P2 gate is re-checked against live serving when hardware is available.
 
 Reason: Keeps development unblocked without corrupting the instrument: the machinery (schemas, walls, replay, telemetry) is fully exercised, while semantic behavior (real dialogue, real relevance) is explicitly out of scope for stand-in runs.
+
+## 2026-07-03 — Dialogue context carries salience and always includes top salient news
+
+Decision: Dialogue-turn context is retrieval about the interlocutor PLUS the speaker's 1–2 most salient recent memories regardless of topic, and each memory travels with its importance score. Prompts instruct speakers to prefer salient material.
+
+Reason: Chasing the first diffusion curve exposed it: query-by-partner alone means a salient fact that isn't about the partner never enters any conversation, so seeded facts cannot spread (Park's party invite spread precisely because salient news rides along). This is the gossip channel — with real models it means the model always sees what's on the agent's mind.
+
+## 2026-07-03 — Conversation ecology calibrations
+
+Decision: (1) Hourly re-observation of still-co-present agents — cohabitants who never move would otherwise get exactly one sighting (and hence one react chance) per day. (2) Recency decay is per sim-HOUR (Park's calibration), not per minute. (3) The fake importance scorer is content-tiered (heard speech 4–7 > sightings/co-presence 2–5 > routine), and the default interrupt threshold is 4 — explicitly a fake-era calibration; real-model runs set thresholds in experiment config. (4) Conversations never attach to sleeping agents, and a conversation whose partner detaches/sleeps is wound down (zombie fix).
+
+Reason: All four surfaced while making diffusion measurable end-to-end. Without them: tavern cohabitants never conversed all day (one spark chance, hash said no), per-minute decay buried day-old salient facts under fresh routine, uniform hash importance let "spent time with X" outrank a seeded rumor, and one zombie conversation kept an agent awake past midnight.
+
+## 2026-07-03 — Fact checks are keyword-based in v1
+
+Decision: Diffusion fact probes are deterministic token-overlap checks against single memory records (model-free, zero probe traffic). Judge-scored fact checks (interview + LLM judgment) become an additional method when real models arrive; the curve methodology stays comparable across both.
+
+Reason: Objective and reproducible, correct for the fake-model era (utterances quote memories verbatim), and it keeps the v1 curve free of judge noise. Real-model paraphrase will need the judge path — tracked, not forgotten.

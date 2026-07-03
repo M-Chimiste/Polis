@@ -1,6 +1,6 @@
 # POLIS — MASTER PLAN
 
-**Current phase:** P2 software complete — gate met on the deterministic fake model (real-model day pending hardware) · next: P3 measurement plane · P0 hardware tasks deferred (user call: no live-LLM work from remote sessions) · **Last updated:** 2026-07-03
+**Current phase:** P3 software complete — gate met (metrics + probes over run artifacts, zero sim footprint, plots produced); first measured diffusion curve exists (fake-model, non-conforming) · next: P4 observer, or hardware tasks · **Last updated:** 2026-07-03
 
 Plan-of-record. `memory_bank/` is the state-of-record for narrative and decisions. Same operating protocol as glasshouse: read MEMORY_BANK context before any task; after any task update phase boxes, phase log, dashboard, activeContext/progress/decisionLog; run tests; one commit per coherent work item.
 
@@ -51,12 +51,14 @@ boot   world  minds  measure│first  ablate
 
 ## P3 — Measurement plane (gate: metrics run against a P2 ledger and produce plots without touching sim state)
 
-- [ ] Probe runner: frozen-state agent interviews + fact checks; probes table; contamination test (probe run ⇒ zero memory/ledger diff).
-- [ ] Diffusion pipeline: seeded-fact treatment injection (logged), periodic fact probes, curve output.
-- [ ] Relationship graph builder: interaction-weighted snapshots per sim-hour; density/clustering/community stability.
-- [ ] Coordination-event detector over the ledger.
-- [ ] Believability probe battery (Park interview categories) + LLM-as-judge scoring via TheseusInsight rubric infra.
-- [ ] Experiment record assembly: one command → archived run bundle on Aletheia.
+**Gate met 2026-07-03** (`tests/test_metrics_probes.py::test_probe_and_metrics_contamination`): every metric + the full probe battery runs against a treated P2 run's artifacts and leaves sim state and artifacts byte-identical; plots land in the bundle.
+
+- [x] Probe runner: frozen-state interviews + fact checks (`metrics/probes.py`; FrozenStream tick-bounded copies, probes get their own CompletionLog); contamination test is the gate test. Fact checks are deterministic keyword checks in v1 (objective, model-free); judge-scored fact checks join with real models. **Pending: probes → Postgres probes table insert (with the other DB wiring).**
+- [x] Diffusion pipeline: treatment injection wired into the runner (ledger `treatment_injected` + target memory at controlled importance), periodic post-hoc fact probes over reconstructed snapshots, curve + plot (`metrics/diffusion.py`). **First measured curve: fact injected at the tavernkeeper reaches the co-located household (1→3 of 5) and never reaches the never-co-present bakery pair — information asymmetry measurable end-to-end (fake-model, non-conforming).**
+- [x] Relationship graph builder: per-sim-hour interaction-weighted snapshots from ledger utterances; density / mean clustering / components / window-stability series + plot (`metrics/graph.py`).
+- [x] Coordination-event detector: sustained ≥k-agent co-location spans reconstructed purely from the ledger (`metrics/coordination.py`).
+- [x] Believability probe battery: Park's five interview categories over frozen state (`metrics/believability.py`); judge is a pluggable interface — DeterministicJudge stub offline. **Pending: TheseusInsight rubric judge integration (external infra).**
+- [x] Experiment record assembly: `python -m metrics.assemble` → self-contained bundle (artifacts, config + hash, metrics.json, probes.jsonl, plots, sha256 manifest). **Pending: rsync bundle to Aletheia (hardware).**
 
 ## P4 — Observer (parallel after P1; gate: live view + replay scrub of a real run)
 

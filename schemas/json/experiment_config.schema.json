@@ -89,7 +89,8 @@
         "kind": {"const": "seeded_fact"},
         "fact": {"type": "string", "minLength": 1},
         "target_agent": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-        "inject_tick": {"type": "integer", "minimum": 0}
+        "inject_tick": {"type": "integer", "minimum": 0},
+        "importance": {"description": "memory importance of the injected fact (controlled, not model-scored)", "type": "integer", "minimum": 1, "maximum": 10, "default": 8}
       }
     }
   }

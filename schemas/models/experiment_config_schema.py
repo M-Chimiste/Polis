@@ -71,6 +71,10 @@ class Treatment(BaseModel):
     fact: constr(min_length=1)
     target_agent: constr(pattern=r"^[a-z0-9_]+$")
     inject_tick: conint(ge=0)
+    importance: conint(ge=1, le=10) | None = Field(
+        8,
+        description="memory importance of the injected fact (controlled, not model-scored)",
+    )
 
 
 class RoleConfig(BaseModel):

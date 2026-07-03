@@ -4,11 +4,13 @@ Updated: 2026-07-03
 
 ## Current state
 
-P2 cognition software complete, gate met on the deterministic fake model: 5 agents (and all 20 via CLI) live a coherent unscripted day on the full Park stack — daily agenda → lazy decomposition → plan-cache execution, importance-scored observations, importance-gated react interrupts, retrieval-grounded dialogue with per-POV summaries and eavesdropper diffusion, reflection with citation edges — every completion logged keyed (agent, call_site, sequence), replay byte-equal including run_started, gateway-down degrading to anchor fallbacks without a crash. `pytest` green — 112 tests.
+P3 measurement plane complete, gate met: all metrics + the probe battery post-process run artifacts with provably zero sim footprint (contamination test), and **the first measured diffusion curve exists** — a fact seeded at the tavernkeeper reaches her co-located household (1→3 of 5) through dialogue + eavesdropping while the never-co-present bakery pair stays dark. Fake-model, so non-conforming — but the entire instrument path (inject → memory → retrieval → utterance → hearing → probe → curve → plot → bundle) demonstrably works.
 
-P1 complete earlier same day (world core, byte-equal fixture wall, 90 affordance-tagged objects, Postgres ledger sink). P0 software half done.
+Built today, in order: P0 software half → P1 world core (byte-equal wall, 90 affordance-tagged objects, Postgres ledger sink) → P2 cognition (Park stack, logged-completion replay, cost telemetry) → P3 (probes, diffusion, graph, coordination, believability battery, bundle assembly). `pytest` green — 130 tests (incl. live local-Postgres integration).
 
-Known stand-ins pending hardware: HashEmbedder (deterministic, non-semantic — runs with it are non-conforming) until the 768-dim BERT-class embedder service exists; fake model until Mnemosyne serving is up.
+Cognition dynamics calibrated while chasing diffusion (see decisionLog): dialogue context carries salience and always includes the speaker's top salient recent memories (the gossip channel); hourly re-observation of co-present agents (cohabitants otherwise get one react chance per day); recency decay per sim-hour (Park's calibration); fake importance is content-tiered. Zombie-conversation bug fixed (conversations no longer attach to sleeping agents).
+
+Known stand-ins pending hardware: HashEmbedder (non-semantic), fake model, DeterministicJudge. Runs using any of them are non-conforming by construction.
 
 **Standing constraint (user, 2026-07-03): development happens from remote sessions — do not attempt live LLM connectivity or real database access; everything is built and tested against mocks/fixtures.** Hardware tasks (Postgres apply, Mnemosyne profile launch, gateway smoke, Postgres ledger sink) are batched for Christian to run from the home network later.
 
@@ -28,8 +30,9 @@ P1 is complete (2026-07-03): objects-with-states authored (35 objects, determini
 
 Buildable from remote next:
 
-- P3 measurement plane: probe runner against frozen state, seeded-fact diffusion pipeline (treatment injection is already just a ledger event + target-agent memory), relationship graph builder, coordination detector — all post-processing cognition-run ledgers/memories, generatable offline with the fake model.
-- P4 observer against exported ledger JSONL.
+- P4 observer (Vite/React/R3F over exported ledger JSONL + the WebSocket sidecar; zero authority).
+- P5 prep: soak runs (multi-day fake-model headless), seed-sweep harness over the diffusion pipeline.
+- DB wiring completion: probes + memory_records + completions Postgres inserts alongside the ledger sink.
 
 Batched for Christian (home network):
 

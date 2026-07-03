@@ -53,3 +53,12 @@ Updated: 2026-07-03
 - Deterministic fake model + prompts with machine-readable CONTEXT_JSON blocks drive the real gateway path offline. Gate test: 5 agents, full day — plans, commutes, 164 object uses (20-agent CLI run), 11 conversations, reflections with citations, 0 failures, byte-equal live rerun AND replay; gateway-down run completes on fallbacks.
 - 20-agent full-day CLI run: 734 ledger events, 431 completions (importance 185, decompose 120, dialogue 60, react 28, planning 20, reflection 18) — call profile matches the paper's shape.
 - Suite: 112 tests green. Pending hardware: real embedder, real-model gate re-run, tp-split measurement.
+
+## P3 measurement plane built, gate met — first diffusion curve (2026-07-03)
+
+- metrics/: probe runner (frozen tick-bounded state, own completion log, keyword fact checks + model interviews), diffusion pipeline (treatment injection in the runner: ledger event + controlled-importance target memory; post-hoc periodic fact probes over reconstructed snapshots; curve + matplotlib plot), relationship graph builder (hourly interaction snapshots, density/clustering/components/stability), coordination detector (≥k-agent co-location spans from the ledger alone), believability battery (Park's 5 interview categories, pluggable judge — DeterministicJudge stub), experiment record assembly (one command → bundle with artifacts, config hash, metrics.json, probes.jsonl, plots, sha256 manifest; Aletheia rsync pending hardware).
+- Gate met: contamination test — every metric + full battery against a treated run; sim artifacts and live state byte-identical after.
+- **First measured diffusion curve**: seeded fact at maren_alder (tavern) → ilse + piet by evening (direct hearing + eavesdrop), bakery pair never reached (never co-present). 1→3 of 5, non-decreasing, pinned in tests. Fake-model = non-conforming, but the whole instrument path works.
+- Getting there surfaced real cognition fixes (salient-news dialogue channel, hourly re-observation, per-hour recency, tiered fake importance, zombie-conversation bug) — see decisionLog.
+- cognition runner: --config (validated experiment config, treatments read from it), memories.jsonl export; probe role added to profiles.
+- Suite: 130 tests green (4 live-Postgres). matplotlib added.

@@ -75,7 +75,16 @@ def _steps(ctx: dict) -> dict:
 def _respond(ctx: dict) -> str:
     role = ctx["role"]
     if role == "importance":
-        return json.dumps({"score": (_h(ctx["observation"]) % 10) + 1})
+        # tiered like a real fast-tier scorer would: routine co-presence is
+        # mundane, speech heard is memorable, sightings sit between
+        text = ctx["observation"]
+        if "said to me" in text or "overheard" in text:
+            score = 4 + _h(text) % 4          # 4-7: speech heard is memorable
+        elif "spent time with" in text or text.startswith("saw "):
+            score = 2 + _h(text) % 4          # 2-5: co-presence and sightings
+        else:
+            score = 3 + _h(text) % 5          # 3-7: plans, summaries, insights
+        return json.dumps({"score": score})
     if role == "daily_planning":
         return json.dumps(_agenda(ctx))
     if role == "decomposition":
@@ -86,8 +95,14 @@ def _respond(ctx: dict) -> str:
             return json.dumps({"action": "start_conversation", "partner": sorted(nearby)[0]})
         return json.dumps({"action": "continue"})
     if role == "dialogue":
-        if "turn" in ctx:  # a turn
-            memory = ctx["memories"][0] if ctx["memories"] else "the day's small business"
+        if "turn" in ctx:  # a turn: most salient memory not already said
+            history_text = "\n".join(ctx["history"])
+            fresh = [m for m in ctx["memories"] if m["text"][:60] not in history_text]
+            if fresh:
+                best = max(fresh, key=lambda m: (m["importance"], _h(m["text"])))
+                memory = best["text"]
+            else:
+                memory = "the day's small business"
             line = f"{ctx['agent']} to {ctx['partner']}: thinking on '{memory[:60]}'"
             if ctx["turn"] >= 3:
                 line += " [DONE]"
@@ -96,6 +111,9 @@ def _respond(ctx: dict) -> str:
             f"{ctx['agent']} spoke with {ctx['partner']}: "
             + (ctx["history"][0][:80] if ctx["history"] else "small talk")
         )})
+    if role == "probe":
+        memory = ctx["memories"][0] if ctx["memories"] else "nothing in particular"
+        return f"Well, since you ask — {memory[:100]}"
     if role == "reflection":
         if "question" in ctx:
             n = len(ctx["memories"])

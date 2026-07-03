@@ -38,3 +38,6 @@ profiles:
       decomposition:
         tier: slow
         sampling: {temperature: 0.6, top_p: 0.95, max_tokens: 768}
+      probe: # measurement plane: frozen-state interviews/fact checks; never on the sim's hot path
+        tier: fast
+        sampling: {temperature: 0.3, top_p: 0.95, max_tokens: 256}
