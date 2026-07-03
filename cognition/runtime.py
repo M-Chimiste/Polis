@@ -91,13 +91,14 @@ class Mind:
 
 class CognitionRuntime:
     def __init__(self, world: World, seeds: dict[str, dict], gateway: CognitionGateway,
-                 embedder, settings: Settings, run_id: str):
+                 embedder, settings: Settings, run_id: str, memory_hook=None):
         self.world = world
         self.gateway = gateway
         self.embedder = embedder
         self.settings = settings
         self.minds = {
-            aid: Mind(seed=seed, stream=MemoryStream(run_id, aid, embedder))
+            aid: Mind(seed=seed,
+                      stream=MemoryStream(run_id, aid, embedder, on_record=memory_hook))
             for aid, seed in sorted(seeds.items())
         }
 

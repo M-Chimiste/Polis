@@ -60,6 +60,7 @@ async def run_cognition(
     completions_sink=None,
     treatments: list[dict] | None = None,
     embedder: Embedder | None = None,
+    pg_sink=None,
 ) -> tuple[LedgerWriter, CognitionGateway, CognitionRuntime]:
     town = load_town()
     seeds = load_agents()
@@ -68,13 +69,22 @@ async def run_cognition(
     run_id = run_id or str(uuid.uuid5(RUN_NS, f"polis:cognition:{seed}:{ticks}:{sorted(seeds)}"))
     settings = settings or Settings()
 
+    if pg_sink is not None:
+        # the runs row must exist before any hooked insert (FK ordering)
+        pg_sink.begin_run(run_id, {
+            "seed": seed, "ticks": ticks, "content_hash": content_hash(),
+            "mode": "cognition", "agents": sorted(seeds),
+        })
     world = World(town, seeds, master_seed=seed)
-    log = CompletionLog(run_id, sink=completions_sink)
+    log = CompletionLog(run_id, sink=completions_sink,
+                        on_record=pg_sink.on_completion if pg_sink else None)
     cog_gateway = CognitionGateway(gateway if replay_log is None else None,
                                    log, replay_from=replay_log)
     runtime = CognitionRuntime(world, seeds, cog_gateway, embedder or HashEmbedder(),
-                               settings, run_id)
-    writer = LedgerWriter(run_id, sink=ledger_sink)
+                               settings, run_id,
+                               memory_hook=pg_sink.on_memory if pg_sink else None)
+    writer = LedgerWriter(run_id, sink=ledger_sink,
+                          on_event=pg_sink.on_ledger_event if pg_sink else None)
 
     # NOTE: replay must reproduce the ledger byte-equal, so nothing here may
     # depend on live-vs-replay; provenance lives in the experiment record
@@ -147,6 +157,8 @@ def main() -> None:
                         help="serving profile name for a real-model run (hardware sessions only)")
     parser.add_argument("--config", type=pathlib.Path, default=None,
                         help="experiment_config JSON (treatments are read from it)")
+    parser.add_argument("--pg-dsn", default=None,
+                        help="also persist ledger + completions + memories to Postgres")
     args = parser.parse_args()
 
     agent_ids = args.agents.split(",") if args.agents else None
@@ -179,19 +191,29 @@ def main() -> None:
         _schemas.validate("experiment_config", config)
         treatments = config.get("treatments")
 
+    pg_sink = None
+    if args.pg_dsn:
+        from services.db.run_sink import PostgresRunSink
+        pg_sink = PostgresRunSink(args.pg_dsn)
+
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    with open(args.out_dir / "ledger.jsonl", "wb") as ledger_sink, \
-         open(args.out_dir / "completions.jsonl", "wb") as completions_sink:
-        writer, cog_gateway, runtime = asyncio.run(run_cognition(
-            args.ticks, args.seed, agent_ids=agent_ids, run_id=run_id,
-            gateway=gateway, replay_log=replay_log,
-            ledger_sink=ledger_sink, completions_sink=completions_sink,
-            treatments=treatments, embedder=embedder,
-        ))
+    try:
+        with open(args.out_dir / "ledger.jsonl", "wb") as ledger_sink, \
+             open(args.out_dir / "completions.jsonl", "wb") as completions_sink:
+            writer, cog_gateway, runtime = asyncio.run(run_cognition(
+                args.ticks, args.seed, agent_ids=agent_ids, run_id=run_id,
+                gateway=gateway, replay_log=replay_log,
+                ledger_sink=ledger_sink, completions_sink=completions_sink,
+                treatments=treatments, embedder=embedder, pg_sink=pg_sink,
+            ))
+    finally:
+        if pg_sink is not None:
+            pg_sink.close()
     with open(args.out_dir / "memories.jsonl", "wb") as memories_sink:
         export_memories(runtime, memories_sink)
     print(f"{writer.seq} ledger events, {cog_gateway.total_calls()} completions, "
-          f"{runtime.total_gateway_failures()} gateway failures -> {args.out_dir}")
+          f"{runtime.total_gateway_failures()} gateway failures -> {args.out_dir}"
+          + (" + postgres" if pg_sink else ""))
 
 
 if __name__ == "__main__":

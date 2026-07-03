@@ -33,12 +33,13 @@ Live-day findings (pre-soak fix list):
 
 ## Immediate next action
 
-Decision (user, 2026-07-03): **proceed to P5 — the north star path.** Order:
+Decision (user, 2026-07-03): **proceed to P5 — the north star path.** Pre-soak fixes all landed same day:
 
-1. Dynamic schema enums (the grounding fix above) — small, high-leverage, pre-soak.
-2. DB wiring completion: memory_records / completions / probes Postgres inserts alongside the ledger sink (soak runs should persist queryably).
-3. Soak: 20 agents, full sim-week, unattended overnight; fix what breaks; calibrate thresholds.
-4. Seeded-fact diffusion experiment across ≥8 seeds.
+1. ~~Dynamic schema enums~~ — done (efb4889): agenda/steps/reaction schemas built per call with enums of real locations/objects/candidates; hallucinated grounding now unrepresentable under grammar.
+2. ~~Crossing-request race~~ — done (2dd914b): request queue + explicit declines + refused-attach closes on ledger. Invariant tested: every started gets exactly one ended; nobody ghosted. NOTE: behavior changes mean pre-fix completion logs no longer replay byte-equal on new code.
+3. ~~DB wiring~~ — done: `services/db/run_sink.py` (one connection, three streams + probes; idempotent by deterministic keys). `cognition.runner --pg-dsn`, `metrics.assemble --pg-dsn`.
+
+Next: **soak** — 20 agents, sim-week (60480 ticks), `--profile metis --pg-dsn postgresql:///polis`, unattended overnight (~11 h). Goals: fix what breaks; calibrate interrupt/reflection thresholds against real-model importance distributions (gate day: reflection fired 168×/5 agents/day); watch for anchor gravity vs routine drift (the Alders made cross-day plans on gate day — check tomorrow's agenda picks them up). Then the ≥8-seed diffusion experiment.
 
 P4 observer stays parallel/deferred — not on the diffusion-curve path.
 

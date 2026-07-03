@@ -108,6 +108,8 @@ def main() -> None:
     parser.add_argument("--out", type=pathlib.Path, required=True)
     parser.add_argument("--with-believability", action="store_true",
                         help="run the interview battery with the offline stub judge")
+    parser.add_argument("--pg-dsn", default=None,
+                        help="also insert the bundle's probe results into Postgres")
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
     gateway = None
@@ -117,8 +119,14 @@ def main() -> None:
     result = assemble(args.run_dir, config, args.out,
                       with_believability=args.with_believability,
                       probe_gateway=gateway)
+    inserted = ""
+    if args.pg_dsn:
+        from services.db.run_sink import insert_probes
+        probes = [json.loads(line)
+                  for line in (args.out / "probes.jsonl").read_bytes().splitlines()]
+        inserted = f", {insert_probes(args.pg_dsn, probes)} probes -> postgres"
     print(f"bundle -> {args.out} ({len(result.get('coordination_events', []))} gatherings, "
-          f"{len(result.get('diffusion', []))} diffusion curves)")
+          f"{len(result.get('diffusion', []))} diffusion curves{inserted})")
 
 
 if __name__ == "__main__":

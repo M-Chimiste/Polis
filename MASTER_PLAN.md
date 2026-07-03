@@ -1,6 +1,6 @@
 # POLIS — MASTER PLAN
 
-**Current phase:** P0 closed; **P2 gate met LIVE 2026-07-03** (5 agents, full day on metis: 1221 completions, 0 gateway failures, replay byte-equal) · P1–P3 complete · next: pre-soak grounding fixes (dynamic schema enums), DB wiring, then P5 soak · **Last updated:** 2026-07-03
+**Current phase:** P0 closed; **P2 gate met LIVE 2026-07-03**; pre-soak fixes complete (dynamic schema enums, crossing-request race, full DB wiring) · next: **P5 soak** (20 agents, sim-week, overnight) · **Last updated:** 2026-07-03
 
 Plan-of-record. `memory_bank/` is the state-of-record for narrative and decisions. Same operating protocol as glasshouse: read MEMORY_BANK context before any task; after any task update phase boxes, phase log, dashboard, activeContext/progress/decisionLog; run tests; one commit per coherent work item.
 
@@ -53,7 +53,7 @@ boot   world  minds  measure│first  ablate
 
 **Gate met 2026-07-03** (`tests/test_metrics_probes.py::test_probe_and_metrics_contamination`): every metric + the full probe battery runs against a treated P2 run's artifacts and leaves sim state and artifacts byte-identical; plots land in the bundle.
 
-- [x] Probe runner: frozen-state interviews + fact checks (`metrics/probes.py`; FrozenStream tick-bounded copies, probes get their own CompletionLog); contamination test is the gate test. Fact checks are deterministic keyword checks in v1 (objective, model-free); judge-scored fact checks join with real models. **Pending: probes → Postgres probes table insert (with the other DB wiring).**
+- [x] Probe runner: frozen-state interviews + fact checks (`metrics/probes.py`; FrozenStream tick-bounded copies, probes get their own CompletionLog); contamination test is the gate test. Fact checks are deterministic keyword checks in v1 (objective, model-free); judge-scored fact checks join with real models. **DB wiring done 2026-07-03:** `services/db/run_sink.py` — cognition runs stream ledger + completions + memory records (embeddings included) into Postgres (`cognition.runner --pg-dsn`), probes insert via `metrics.assemble --pg-dsn`; all inserts idempotent (deterministic keys, ON CONFLICT DO NOTHING).
 - [x] Diffusion pipeline: treatment injection wired into the runner (ledger `treatment_injected` + target memory at controlled importance), periodic post-hoc fact probes over reconstructed snapshots, curve + plot (`metrics/diffusion.py`). **First measured curve: fact injected at the tavernkeeper reaches the co-located household (1→3 of 5) and never reaches the never-co-present bakery pair — information asymmetry measurable end-to-end (fake-model, non-conforming).**
 - [x] Relationship graph builder: per-sim-hour interaction-weighted snapshots from ledger utterances; density / mean clustering / components / window-stability series + plot (`metrics/graph.py`).
 - [x] Coordination-event detector: sustained ≥k-agent co-location spans reconstructed purely from the ledger (`metrics/coordination.py`).

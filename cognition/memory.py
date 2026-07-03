@@ -15,13 +15,15 @@ MEM_NS = uuid.UUID("6ba7b812-9dad-11d1-80b4-00c04fd430c8")  # uuid.NAMESPACE_OID
 
 
 class MemoryStream:
-    def __init__(self, run_id: str, agent_id: str, embedder: Embedder):
+    def __init__(self, run_id: str, agent_id: str, embedder: Embedder,
+                 on_record=None):
         self.run_id = run_id
         self.agent_id = agent_id
         self._embedder = embedder
         self.records: list[dict] = []
         self.embeddings: dict[str, list[float]] = {}
         self._counter = 0
+        self._on_record = on_record  # (record, embedding) -> None; e.g. Postgres
 
     def write(self, kind: str, text: str, tick: int, importance: int,
               citations: list[str] | None = None) -> dict:
@@ -42,6 +44,8 @@ class MemoryStream:
         self._counter += 1
         self.records.append(record)
         self.embeddings[record["id"]] = self._embedder.embed([text])[0]
+        if self._on_record is not None:
+            self._on_record(record, self.embeddings[record["id"]])
         return record
 
     def importance_sum_since(self, record_count: int) -> float:

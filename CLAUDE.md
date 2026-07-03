@@ -27,7 +27,7 @@ python3 scripts/validate_content.py              # run after ANY hand edit to co
 # Headless runs (the primary mode; all deterministic given seed):
 python -m sim.runner --ticks 3000 --seed 42 --out ledger.jsonl              # P1 scripted world, no LLM
 python -m cognition.runner --ticks 8640 --seed 42 --agents maren_alder,piet_alder --out-dir run_out   # P2, fake model
-python -m cognition.runner --ticks 8640 --seed 42 --agents ... --profile metis --out-dir run_out      # live models (metis|athena)
+python -m cognition.runner --ticks 8640 --seed 42 --agents ... --profile metis --out-dir run_out      # live models (metis|athena); --pg-dsn postgresql:///polis also streams to Postgres
 python -m cognition.runner --ticks 8640 --seed 42 --agents ... --replay-dir run_out --out-dir run2    # replay from logged completions
 python -m metrics.assemble --run-dir run_out --config experiment.json --out bundle/   # P3 experiment record bundle
 ```

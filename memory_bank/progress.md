@@ -81,3 +81,10 @@ Updated: 2026-07-03
 - Live-only findings recorded in activeContext (pre-soak list): two grounding gaps behind 27 intent rejections (missing move_to before use_object; hallucinated agenda locations → fix = dynamic schema enums), hot importance scores (reflection 168 calls — threshold calibration to experiment config during soak), one era anachronism (content pass), conversation_ended undercount to check.
 - Soak sizing datum: 20-agent sim-week ≈ 34k calls ≈ ~11 h overnight.
 - User decisions: metis/athena are identical servers (shunt difference is version drift — treat as interchangeable); proceed to P5 (north star), P4 stays deferred.
+
+## Pre-soak fix list landed (2026-07-03)
+
+- **Dynamic grounding schemas** (efb4889): agenda_schema/steps_schema/reaction_schema are per-call builders — town-location enums, block-location object/verb enums, co-located candidate enums. Grammar makes bad grounding unrepresentable; a location with no objects doesn't offer use_object; no candidates forces "continue". 5 new schema tests.
+- **Crossing-request race fixed** (2dd914b): Mind.incoming_requests is a deduped FIFO answered one per tick (accept if free, else explicit decline); a conversation_started the runtime can't attach (busy/asleep party) immediately emits conversation_ended (turns=0). Regression test reproduces the exact live-day 3-way crossing. Pre-fix completion logs no longer replay byte-equal on new code (replay holds within a code version — expected).
+- **DB wiring complete**: PostgresRunSink (services/db/run_sink.py) streams ledger events + completions + memory records with embeddings over one connection via hooks (LedgerWriter on_event, CompletionLog on_record, MemoryStream on_record); insert_probes for the measurement plane. All inserts ON CONFLICT DO NOTHING against deterministic keys — reruns/replays are no-ops. CLI: cognition.runner --pg-dsn, metrics.assemble --pg-dsn. 3 live-Postgres integration tests.
+- Suite: 150 tests green. Next: the sim-week soak.

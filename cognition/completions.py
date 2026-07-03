@@ -26,11 +26,13 @@ class CompletionLog:
     """Ordered, keyed log of call outcomes. JSONL is the wall; the Postgres
     completions table is the queryable copy (services/db)."""
 
-    def __init__(self, run_id: str, sink: BinaryIO | None = None):
+    def __init__(self, run_id: str, sink: BinaryIO | None = None,
+                 on_record=None):
         self.run_id = run_id
         self.records: list[dict] = []
         self._by_key: dict[tuple[str, str, int], dict] = {}
         self._sink = sink
+        self._on_record = on_record  # e.g. PostgresRunSink.on_completion
 
     def record(self, agent_id: str, call_site: str, sequence: int, role: str,
                request_messages: list[dict], result: GatewayResult, tick: int) -> dict:
@@ -49,6 +51,8 @@ class CompletionLog:
         self._by_key[(agent_id, call_site, sequence)] = entry
         if self._sink is not None:
             self._sink.write(canonical(entry))
+        if self._on_record is not None:
+            self._on_record(entry)
         return entry
 
     def lookup(self, agent_id: str, call_site: str, sequence: int) -> dict | None:
