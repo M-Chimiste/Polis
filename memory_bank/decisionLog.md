@@ -32,7 +32,7 @@ Reason: Any injected pressure destroys the ability to attribute observed behavio
 
 Decision: Single authoritative Python process for the sim; thin FastAPI sidecar for ledger streaming/control only. Runs on a Mac (see "Mnemosyne serves, Macs simulate").
 
-Reason: Tick work is trivial at ≤25 agents; the bottleneck is LLM latency. One language for sim + cognition + metrics + TheseusInsight tooling. Rust/wgpu ambitions stay with Vivarium.
+Reason: Tick work is trivial at ≤25 agents; the bottleneck is LLM latency. One language for sim + cognition + metrics tooling. Rust/wgpu ambitions stay with Vivarium.
 
 ## 2026-07-03 — Park-faithful cognition, corners un-cut
 
@@ -127,3 +127,9 @@ Reason: All four surfaced while making diffusion measurable end-to-end. Without 
 Decision: Diffusion fact probes are deterministic token-overlap checks against single memory records (model-free, zero probe traffic). Judge-scored fact checks (interview + LLM judgment) become an additional method when real models arrive; the curve methodology stays comparable across both.
 
 Reason: Objective and reproducible, correct for the fake-model era (utterances quote memories verbatim), and it keeps the v1 curve free of judge noise. Real-model paraphrase will need the judge path — tracked, not forgotten.
+
+## 2026-07-03 — Correction: "TheseusInsight" was drafting leakage, not a dependency
+
+Decision: All references to "TheseusInsight" are removed from the plan, memory bank, code comments, and serving notes. The believability judge is a generic LLM-as-judge with a rubric — model and rubric chosen at hardware time — behind the existing pluggable Judge interface. No external project's infrastructure is assumed for scoring or publication.
+
+Reason: User call. The name leaked into the drafted planning documents from unrelated older projects; nothing about POLIS depends on it and nothing project-specific was ever meant. The judge-tier design (offline, never on the hot path, pluggable) is unchanged.

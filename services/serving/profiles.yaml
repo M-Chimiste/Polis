@@ -9,8 +9,8 @@
 # host (Mac) against the Mnemosyne vLLM proxy. base_url is the Tailscale
 # name; confirm host/port at smoke time.
 #
-# Judge tier (offline believability scoring) is deliberately absent: it uses
-# whatever TheseusInsight currently uses and is never on the hot path.
+# Judge tier (offline believability scoring) is deliberately absent: it is a
+# generic LLM-as-judge chosen at hardware time and is never on the hot path.
 profiles:
   mnemosyne:
     base_url: http://mnemosyne:8000/v1

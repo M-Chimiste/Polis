@@ -57,7 +57,7 @@ boot   world  minds  measure│first  ablate
 - [x] Diffusion pipeline: treatment injection wired into the runner (ledger `treatment_injected` + target memory at controlled importance), periodic post-hoc fact probes over reconstructed snapshots, curve + plot (`metrics/diffusion.py`). **First measured curve: fact injected at the tavernkeeper reaches the co-located household (1→3 of 5) and never reaches the never-co-present bakery pair — information asymmetry measurable end-to-end (fake-model, non-conforming).**
 - [x] Relationship graph builder: per-sim-hour interaction-weighted snapshots from ledger utterances; density / mean clustering / components / window-stability series + plot (`metrics/graph.py`).
 - [x] Coordination-event detector: sustained ≥k-agent co-location spans reconstructed purely from the ledger (`metrics/coordination.py`).
-- [x] Believability probe battery: Park's five interview categories over frozen state (`metrics/believability.py`); judge is a pluggable interface — DeterministicJudge stub offline. **Pending: TheseusInsight rubric judge integration (external infra).**
+- [x] Believability probe battery: Park's five interview categories over frozen state (`metrics/believability.py`); judge is a pluggable interface — DeterministicJudge stub offline. **Pending: real LLM-as-judge with a rubric (judge tier, hardware time).**
 - [x] Experiment record assembly: `python -m metrics.assemble` → self-contained bundle (artifacts, config + hash, metrics.json, probes.jsonl, plots, sha256 manifest). **Pending: rsync bundle to Aletheia (hardware).**
 
 ## P4 — Observer (parallel after P1; gate: live view + replay scrub of a real run)
@@ -78,7 +78,7 @@ boot   world  minds  measure│first  ablate
 
 - [ ] Condition runner: config-matrix execution across retrieval variants (full R×I×R / recency-only / salience+tag), reflection on/off, interrupt-threshold sweep.
 - [ ] Comparison reports: per-condition diffusion curves, graph metrics, believability, cost, with seed-level variance.
-- [ ] Decide the first writeup target (blog / whitepaper / TheseusInsight pipeline) from the data.
+- [ ] Decide the first writeup target (blog / whitepaper) from the data.
 
 ---
 

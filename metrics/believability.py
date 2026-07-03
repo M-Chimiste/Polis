@@ -2,8 +2,8 @@
 
 Interviews run through the probe runner against frozen state. Scoring is a
 pluggable async judge; DeterministicJudge is the offline stand-in (runs
-scored with it are non-conforming). The TheseusInsight rubric judge plugs in
-here when hardware/infra is available — same interface, judge tier, offline.
+scored with it are non-conforming). A real LLM-as-judge with a rubric plugs
+in here when hardware is available — same interface, judge tier, offline.
 """
 from __future__ import annotations
 

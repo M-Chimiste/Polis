@@ -2,7 +2,7 @@
 
 ## Who this is for
 
-Christian, as researcher. Secondary: the open-source/research community if results warrant a writeup (TheseusInsight pipeline is the natural publication path). Twitch is a possible *distribution* channel for replays, never an input.
+Christian, as researcher. Secondary: the open-source/research community if results warrant a writeup. Twitch is a possible *distribution* channel for replays, never an input.
 
 ## Research questions (ordered)
 
@@ -17,7 +17,7 @@ Christian, as researcher. Secondary: the open-source/research community if resul
 - **Diffusion curve:** % of population holding a seeded fact vs. sim-time; measured by periodic probe queries against each agent's memory (probe results logged, never fed back into cognition).
 - **Relationship graph:** interaction-weighted graph snapshot per sim-hour; track density, clustering coefficient, community stability.
 - **Coordination events:** ≥3 agents co-located + convergent stated intent within a window, detected by a ledger post-processor (no in-sim labeling).
-- **Believability spot checks:** Park-style interview probes (self-knowledge, memory, plans, reactions) run against frozen agent states, scored by LLM-as-judge (TheseusInsight rubric infrastructure reused).
+- **Believability spot checks:** Park-style interview probes (self-knowledge, memory, plans, reactions) run against frozen agent states, scored by a generic LLM-as-judge with a rubric.
 - **Cost telemetry:** tokens and wall-time per agent per sim-hour, per cognition tier — sustainability is a result, not an afterthought.
 
 ## Experiment protocol
