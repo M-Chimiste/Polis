@@ -143,7 +143,8 @@ class CognitionRuntime:
                  if r["kind"] in ("reflection", "conversation_summary")][-3:]
         result = await self._call(
             aid, "daily_plan", "daily_planning",
-            prompts.daily_plan_prompt(mind.seed, day, recap), prompts.AGENDA_SCHEMA)
+            prompts.daily_plan_prompt(mind.seed, day, recap),
+            prompts.agenda_schema(sorted(self.world.doors)))
         if isinstance(result, GatewayCompletion):
             agenda, from_fallback = result.parsed["agenda"], False
         else:
@@ -169,11 +170,11 @@ class CognitionRuntime:
         if mind.plan.from_fallback:
             payload = {"steps": fallback_steps(block)}
         else:
+            block_objects = self._location_objects(block["location"])
             result = await self._call(
                 aid, "decompose", "decomposition",
-                prompts.decompose_prompt(mind.seed, block,
-                                         self._location_objects(block["location"])),
-                prompts.STEPS_SCHEMA)
+                prompts.decompose_prompt(mind.seed, block, block_objects),
+                prompts.steps_schema(sorted(self.world.doors), block_objects))
             if isinstance(result, GatewayCompletion):
                 payload = result.parsed
             else:
@@ -400,7 +401,7 @@ class CognitionRuntime:
                 result = await self._call(
                     aid, "react", "action_selection",
                     prompts.reaction_prompt(mind.seed, record["text"], candidates),
-                    prompts.REACTION_SCHEMA)
+                    prompts.reaction_schema(candidates))
                 if not isinstance(result, GatewayCompletion):
                     mind.gateway_failures += 1
                     continue

@@ -32,65 +32,85 @@ IMPORTANCE_SCHEMA = {
     "properties": {"score": {"type": "integer", "minimum": 1, "maximum": 10}},
 }
 
-AGENDA_SCHEMA = {
-    "title": "daily_agenda",
-    "type": "object",
-    "required": ["agenda"],
-    "additionalProperties": False,
-    "properties": {
-        "agenda": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "type": "object",
-                "required": ["start", "end", "activity", "location"],
-                "additionalProperties": False,
-                "properties": {
-                    "start": HHMM,
-                    "end": HHMM,
-                    "activity": {"type": "string", "minLength": 1},
-                    "location": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-                },
-            },
-        }
-    },
-}
+# Grounding schemas are built per call with enums of what actually exists —
+# grammar-constrained decoding then makes a hallucinated location or object
+# unrepresentable instead of merely rejected (live-gate lesson 2026-07-03:
+# 'market_district', bakery objects used from across town).
 
-STEPS_SCHEMA = {
-    "title": "action_steps",
-    "type": "object",
-    "required": ["steps"],
-    "additionalProperties": False,
-    "properties": {
-        "steps": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "type": "object",
-                "required": ["minutes", "kind"],
-                "additionalProperties": False,
-                "properties": {
-                    "minutes": {"type": "integer", "minimum": 1},
-                    "kind": {"enum": ["move_to", "use_object", "idle", "sleep"]},
-                    "destination": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-                    "object_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-                    "interaction": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-                },
-            },
-        }
-    },
-}
 
-REACTION_SCHEMA = {
-    "title": "reaction",
-    "type": "object",
-    "required": ["action"],
-    "additionalProperties": False,
-    "properties": {
-        "action": {"enum": ["continue", "start_conversation"]},
-        "partner": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-    },
-}
+def agenda_schema(location_ids: list[str]) -> dict:
+    return {
+        "title": "daily_agenda",
+        "type": "object",
+        "required": ["agenda"],
+        "additionalProperties": False,
+        "properties": {
+            "agenda": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "type": "object",
+                    "required": ["start", "end", "activity", "location"],
+                    "additionalProperties": False,
+                    "properties": {
+                        "start": HHMM,
+                        "end": HHMM,
+                        "activity": {"type": "string", "minLength": 1},
+                        "location": {"enum": sorted(location_ids)},
+                    },
+                },
+            }
+        },
+    }
+
+
+def steps_schema(location_ids: list[str], objects: list[dict]) -> dict:
+    """objects: the block location's objects ({id, interactions} at minimum).
+    No objects there -> use_object is not even offered."""
+    kinds = ["move_to", "use_object", "idle", "sleep"] if objects \
+        else ["move_to", "idle", "sleep"]
+    properties = {
+        "minutes": {"type": "integer", "minimum": 1},
+        "kind": {"enum": kinds},
+        "destination": {"enum": sorted(location_ids)},
+    }
+    if objects:
+        properties["object_id"] = {"enum": sorted(o["id"] for o in objects)}
+        properties["interaction"] = {
+            "enum": sorted({verb for o in objects for verb in o["interactions"]})}
+    return {
+        "title": "action_steps",
+        "type": "object",
+        "required": ["steps"],
+        "additionalProperties": False,
+        "properties": {
+            "steps": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "type": "object",
+                    "required": ["minutes", "kind"],
+                    "additionalProperties": False,
+                    "properties": properties,
+                },
+            }
+        },
+    }
+
+def reaction_schema(candidates: list[str]) -> dict:
+    """candidates: co-located, conversation-free agents. Nobody available ->
+    the model is grammar-forced to continue."""
+    properties: dict = {"action": {"enum": ["continue", "start_conversation"]
+                                   if candidates else ["continue"]}}
+    if candidates:
+        properties["partner"] = {"enum": sorted(candidates)}
+    return {
+        "title": "reaction",
+        "type": "object",
+        "required": ["action"],
+        "additionalProperties": False,
+        "properties": properties,
+    }
 
 QUESTIONS_SCHEMA = {
     "title": "reflection_questions",
