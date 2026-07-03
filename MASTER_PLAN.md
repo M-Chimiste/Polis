@@ -1,6 +1,6 @@
 # POLIS — MASTER PLAN
 
-**Current phase:** P1 world core built, gate met (byte-equal fixture) · P0 hardware tasks deferred (user call: no live-LLM/DB work from remote sessions) · **Last updated:** 2026-07-03
+**Current phase:** P1 complete (gate met: byte-equal fixture) · next: P2 cognition against the mocked gateway · P0 hardware tasks deferred (user call: no live-LLM work from remote sessions) · **Last updated:** 2026-07-03
 
 Plan-of-record. `memory_bank/` is the state-of-record for narrative and decisions. Same operating protocol as glasshouse: read MEMORY_BANK context before any task; after any task update phase boxes, phase log, dashboard, activeContext/progress/decisionLog; run tests; one commit per coherent work item.
 
@@ -29,12 +29,12 @@ boot   world  minds  measure│first  ablate
 
 ## P1 — World core (gate: byte-equal ledger fixture across two headless runs, no LLM)
 
-- [x] Town spec: **DONE at inception** — generated once via `scripts/generate_content.py`, frozen as static `content/town.json` (Harrowmere, 16 locations, 48×48). Objects-with-states still to populate.
+- [x] Town spec: **DONE at inception** — generated once via `scripts/generate_content.py`, frozen as static `content/town.json` (Harrowmere, 16 locations, 48×48). Objects-with-states populated 2026-07-03: 35 objects, deterministic verb→state interactions, `use_object` transitions them (validator + schema extended; part of Christian's pending rejection pass).
 - [x] Tick loop: deterministic world step (`sim/world.py`), seeded PRNG streams per subsystem (`sim/rng.py`, plumbed; scripted mode draws nothing yet — pinned by test), A* pathfinding with fixed tie-breaks (`sim/grid.py`), co-location.
 - [x] Intent grammar + validator: move_to, use_object, converse_with(request/accept/decline), idle, sleep — schema wall + world-semantic checks; rejects land in the ledger as `intent_rejected`.
 - [x] Perception, from scratch to P11 semantics: sight cone ∧ occlusion ∨ hearing radius (`sim/perception.py`); all parameters config (`experiment_config.perception`).
 - [x] Scripted-agent mode (FSM stand-ins, anchor-driven) — a full sim-day: 20 agents wake, commute, work, return, sleep; zero rejections.
-- [x] Ledger stream: canonical JSONL writer + WebSocket sidecar (`sim/stream.py`, zero authority); **byte-equal replay fixture established** (`tests/fixtures/ledger_scripted_seed42_3000.jsonl` — the permanent wall). **Pending: Postgres persistence sink (deferred with the other hardware tasks).**
+- [x] Ledger stream: canonical JSONL writer + WebSocket sidecar (`sim/stream.py`, zero authority); **byte-equal replay fixture established** (`tests/fixtures/ledger_scripted_seed42_3000.jsonl` — the permanent wall). Postgres sink (`services/db/ledger_sink.py`, `--pg-dsn` on the runner) integration-tested against a throwaway container Postgres; tests skip cleanly where no DB is reachable. Homelab run still on Christian's batch list.
 
 ## P2 — Cognition (gate: 5 agents live a coherent unscripted day; every completion logged and replayable)
 

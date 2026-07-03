@@ -38,6 +38,16 @@ for l in town["locations"]:
         errors.append(f"location {l['id']}: door {l['door']} not on rect perimeter {l['rect']}")
     rects[l["id"]] = (x, y, w, h)
 
+# --- objects ---
+seen_objects = {}
+for l in town["locations"]:
+    for o in l.get("objects", []):
+        if o["id"] in seen_objects:
+            errors.append(f"object id '{o['id']}' duplicated in {seen_objects[o['id']]} and {l['id']}")
+        seen_objects[o["id"]] = l["id"]
+        if not o.get("interactions"):
+            errors.append(f"object {o['id']}: no interactions")
+
 ids = list(rects)
 for i, a in enumerate(ids):
     ax, ay, aw, ah = rects[a]
@@ -93,5 +103,5 @@ if errors:
     for e in errors:
         print(f"  - {e}")
     sys.exit(1)
-print(f"OK — {len(town['locations'])} locations, {len(agents)} agents, "
-      f"{len(rels)} relationship edges, all consistent")
+print(f"OK — {len(town['locations'])} locations, {len(seen_objects)} objects, "
+      f"{len(agents)} agents, {len(rels)} relationship edges, all consistent")

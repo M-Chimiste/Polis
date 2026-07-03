@@ -32,9 +32,17 @@ class DoorItem(RootModel[conint(ge=0)]):
 
 
 class Object(BaseModel):
-    id: constr(pattern=r"^[a-z0-9_]+$")
-    name: str | None = None
-    state: str | None = None
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: constr(pattern=r"^[a-z0-9_]+$") = Field(
+        ..., description="globally unique across the town"
+    )
+    name: constr(min_length=1)
+    state: constr(pattern=r"^[a-z0-9_]+$")
+    interactions: dict[
+        constr(pattern=r"^[a-z0-9_]+$"), constr(pattern=r"^[a-z0-9_]+$")
+    ] = Field(..., min_length=1)
 
 
 class Location(BaseModel):
@@ -62,7 +70,8 @@ class Location(BaseModel):
     )
     tags: list[str]
     objects: list[Object] = Field(
-        ..., description="Objects-with-states; still to populate (P1)"
+        ...,
+        description="Objects-with-states. interactions maps an allowed verb to the resulting state — the only way object state changes, and it is deterministic.",
     )
 
 

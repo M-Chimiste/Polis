@@ -37,7 +37,14 @@ class World:
         self.blocked = build_blocked(town)
         self.doors: dict[str, Cell] = {l["id"]: tuple(l["door"]) for l in town["locations"]}
         self.objects: dict[str, dict] = {
-            o["id"]: o for l in town["locations"] for o in l["objects"]
+            o["id"]: {
+                "location": l["id"],
+                "name": o["name"],
+                "state": o["state"],
+                "interactions": o["interactions"],
+            }
+            for l in town["locations"]
+            for o in l["objects"]
         }
         self.master_seed = master_seed
         self.tick = 0
@@ -111,10 +118,19 @@ class World:
             return []
 
         if kind == "use_object":
-            obj = intent["object_id"]
-            if obj not in self.objects:
-                return self._reject(agent_id, intent, f"unknown object '{obj}'")
-            return [("object_used", agent_id, {"object_id": obj, "interaction": intent["interaction"]})]
+            obj_id, interaction = intent["object_id"], intent["interaction"]
+            obj = self.objects.get(obj_id)
+            if obj is None:
+                return self._reject(agent_id, intent, f"unknown object '{obj_id}'")
+            if self.location_of(agent_id) != obj["location"]:
+                return self._reject(agent_id, intent, f"not at '{obj['location']}' where '{obj_id}' is")
+            new_state = obj["interactions"].get(interaction)
+            if new_state is None:
+                return self._reject(agent_id, intent, f"'{interaction}' not allowed on '{obj_id}'")
+            old_state, obj["state"] = obj["state"], new_state
+            return [("object_state_changed", agent_id, {
+                "object_id": obj_id, "interaction": interaction, "from": old_state, "to": new_state,
+            })]
 
         if kind == "converse_with":
             partner, mode = intent["partner_id"], intent["mode"]

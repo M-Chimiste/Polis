@@ -70,10 +70,20 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--out", type=pathlib.Path, required=True)
     parser.add_argument("--run-id", default=None)
+    parser.add_argument("--pg-dsn", default=None,
+                        help="also persist the ledger to Postgres (schema must be applied)")
     args = parser.parse_args()
-    with open(args.out, "wb") as sink:
-        writer = run(args.ticks, args.seed, run_id=args.run_id, sink=sink)
-    print(f"{writer.seq} events -> {args.out}")
+    pg_sink = None
+    if args.pg_dsn:
+        from services.db.ledger_sink import PostgresLedgerSink
+        pg_sink = PostgresLedgerSink(args.pg_dsn)
+    try:
+        with open(args.out, "wb") as sink:
+            writer = run(args.ticks, args.seed, run_id=args.run_id, sink=sink, on_event=pg_sink)
+    finally:
+        if pg_sink is not None:
+            pg_sink.close()
+    print(f"{writer.seq} events -> {args.out}" + (" + postgres" if pg_sink else ""))
 
 
 if __name__ == "__main__":

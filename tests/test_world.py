@@ -79,11 +79,29 @@ def test_conversation_requires_colocation():
     assert any(k == "intent_rejected" for k, _, _ in events)
 
 
-def test_use_object_rejected_until_objects_exist():
+def test_use_object_transitions_state():
     world = make_world()
-    aid = "sela_crane"
+    aid = "maren_alder"  # starts at the gilded_perch door, where the ale barrel is
+    assert world.objects["ale_barrel"]["state"] == "sealed"
     events = world.step({aid: {"agent_id": aid, "tick": 0, "kind": "use_object", "object_id": "ale_barrel", "interaction": "tap"}})
-    assert any(k == "intent_rejected" for k, _, _ in events)
+    assert ("object_state_changed", aid,
+            {"object_id": "ale_barrel", "interaction": "tap", "from": "sealed", "to": "tapped"}) in events
+    assert world.objects["ale_barrel"]["state"] == "tapped"
+
+
+def test_use_object_semantic_rejections():
+    world = make_world()
+    at_perch, elsewhere = "maren_alder", "sela_crane"
+    cases = [
+        (at_perch, {"object_id": "phantom_chair", "interaction": "sit"}),   # unknown object
+        (elsewhere, {"object_id": "ale_barrel", "interaction": "tap"}),      # wrong location
+        (at_perch, {"object_id": "ale_barrel", "interaction": "smash"}),    # verb not allowed
+    ]
+    for tick, (aid, params) in enumerate(cases):
+        intent = {"agent_id": aid, "tick": tick, "kind": "use_object", **params}
+        events = world.step({aid: intent})
+        assert any(k == "intent_rejected" for k, _, _ in events), params
+    assert world.objects["ale_barrel"]["state"] == "sealed"
 
 
 def test_sleep_wake_status_events():

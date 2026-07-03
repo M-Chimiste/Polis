@@ -22,15 +22,16 @@ Open fork still awaiting a call:
 
 ## Immediate next action
 
-Buildable from remote (no LLM/DB needed):
+P1 is complete (2026-07-03): objects-with-states authored (35 objects, deterministic verb→state transitions wired through `use_object`), and the Postgres ledger sink built + integration-tested against a throwaway Postgres inside the dev container (tests auto-skip without a DB; `POLIS_TEST_DSN` overrides).
 
-- P1 leftovers: populate objects-with-states in `content/town.json`; Postgres ledger sink can be written but not integration-tested (defer).
+Buildable from remote next:
+
 - P2 cognition against the mocked gateway: memory stream write path, R×I×R retrieval scorer (pgvector-backed in prod, in-memory for tests), plan-cache runtime, logged-completion replay mode — replay is by construction testable without a model.
 - P3 metrics over the committed ledger fixture; P4 observer against exported ledger JSONL.
 
 Batched for Christian (home network):
 
-1. Content rejection pass (names, tone, tension seeds) — still pending.
-2. Postgres with pgvector anywhere: apply `services/db/schema.sql` (768-dim, decided).
+1. Content rejection pass (names, tone, tension seeds, now also the 35 objects) — still pending.
+2. Postgres with pgvector anywhere: apply `services/db/schema.sql` (768-dim, decided) and run one sim with `--pg-dsn` at it.
 3. Mnemosyne: launch fast/slow vLLM tiers per `services/serving/mnemosyne/*.yaml`; confirm proxy base_url in `profiles.yaml`.
 4. Gateway smoke from the sim host against the live proxy. Closes P0.

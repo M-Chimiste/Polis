@@ -32,3 +32,9 @@ Updated: 2026-07-03
 - Bug caught by the gate work: door cells can lie on a neighbouring rect's edge; `locate()` now resolves doors first and treats rect membership as strictly interior (perimeter = walls, nobody's floor).
 - Remaining P1: objects-with-states in town.json; Postgres ledger sink (hardware-batched).
 - Suite: 79 tests green.
+
+## P1 completed: objects + Postgres sink (2026-07-03)
+
+- Objects-with-states: 35 objects authored across all 16 locations (content edit, folded into the pending rejection pass). Deterministic interaction model: each object carries `interactions: {verb: resulting_state}`; `use_object` requires co-location and an allowed verb, transitions state, and emits `object_state_changed`. Schema + validator extended (object ids globally unique, interactions non-empty); mirrors regenerated. Fixture regenerated (content_hash lives in run_started, so content edits move the wall — deliberate).
+- Postgres ledger sink (`services/db/ledger_sink.py`): LedgerWriter on_event hook; registers the run on run_started, batches inserts, marks runs finished on run_finished; `apply_schema()` applies the DDL idempotently. Runner gained `--pg-dsn`. Integration-tested against a throwaway Postgres 16 + pgvector installed in the dev container; tests skip cleanly when no DB is reachable (POLIS_TEST_DSN overrides the default local DSN). JSONL remains the byte-equal wall; Postgres is the queryable copy for the measurement plane.
+- Suite: 83 tests green (3 of them live-DB integration).

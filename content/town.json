@@ -26,7 +26,26 @@
         "gathering",
         "commerce"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "notice_board",
+          "name": "Parish Notice Board",
+          "state": "posted",
+          "interactions": {
+            "read": "posted",
+            "post_notice": "freshly_posted"
+          }
+        },
+        {
+          "id": "handcart",
+          "name": "Common Handcart",
+          "state": "empty",
+          "interactions": {
+            "load": "loaded",
+            "unload": "empty"
+          }
+        }
+      ]
     },
     {
       "id": "village_well",
@@ -47,7 +66,26 @@
         "gathering",
         "water"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "well_bucket",
+          "name": "Well Bucket",
+          "state": "empty",
+          "interactions": {
+            "draw_water": "full",
+            "pour_out": "empty"
+          }
+        },
+        {
+          "id": "stone_trough",
+          "name": "Stone Trough",
+          "state": "half_full",
+          "interactions": {
+            "fill": "full",
+            "drain": "empty"
+          }
+        }
+      ]
     },
     {
       "id": "gilded_perch",
@@ -70,7 +108,35 @@
         "drink",
         "lodging"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "perch_hearth",
+          "name": "Taproom Hearth",
+          "state": "banked",
+          "interactions": {
+            "stoke": "lit",
+            "bank": "banked"
+          }
+        },
+        {
+          "id": "ale_barrel",
+          "name": "Autumn Ale Barrel",
+          "state": "sealed",
+          "interactions": {
+            "tap": "tapped",
+            "seal": "sealed"
+          }
+        },
+        {
+          "id": "guest_ledger",
+          "name": "Guest Ledger",
+          "state": "closed",
+          "interactions": {
+            "open_ledger": "open",
+            "close_ledger": "closed"
+          }
+        }
+      ]
     },
     {
       "id": "crane_bakery",
@@ -91,7 +157,26 @@
         "food",
         "commerce"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "bread_oven",
+          "name": "Bread Oven",
+          "state": "cold",
+          "interactions": {
+            "fire": "fired",
+            "rake_out": "cold"
+          }
+        },
+        {
+          "id": "kneading_table",
+          "name": "Kneading Table",
+          "state": "clean",
+          "interactions": {
+            "knead": "floured",
+            "scrub": "clean"
+          }
+        }
+      ]
     },
     {
       "id": "vosse_smithy",
@@ -112,7 +197,35 @@
         "craft",
         "commerce"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "forge",
+          "name": "Forge",
+          "state": "banked",
+          "interactions": {
+            "stoke": "roaring",
+            "bank": "banked"
+          }
+        },
+        {
+          "id": "anvil",
+          "name": "Anvil",
+          "state": "idle",
+          "interactions": {
+            "work_metal": "ringing",
+            "set_down": "idle"
+          }
+        },
+        {
+          "id": "quench_barrel",
+          "name": "Quench Barrel",
+          "state": "full",
+          "interactions": {
+            "quench": "steaming",
+            "refill": "full"
+          }
+        }
+      ]
     },
     {
       "id": "quill_store",
@@ -132,7 +245,26 @@
       "tags": [
         "commerce"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "shop_counter",
+          "name": "Shop Counter",
+          "state": "shuttered",
+          "interactions": {
+            "open_shop": "open",
+            "shutter": "shuttered"
+          }
+        },
+        {
+          "id": "stock_shelves",
+          "name": "Stockroom Shelves",
+          "state": "stocked",
+          "interactions": {
+            "pick_stock": "picked_over",
+            "restock": "stocked"
+          }
+        }
+      ]
     },
     {
       "id": "marsh_cottage",
@@ -153,7 +285,26 @@
         "herbalism",
         "healing"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "drying_rack",
+          "name": "Herb Drying Rack",
+          "state": "hung_with_herbs",
+          "interactions": {
+            "hang_herbs": "hung_with_herbs",
+            "strip_herbs": "bare"
+          }
+        },
+        {
+          "id": "still_pot",
+          "name": "Still Pot",
+          "state": "idle",
+          "interactions": {
+            "set_simmering": "simmering",
+            "cool": "idle"
+          }
+        }
+      ]
     },
     {
       "id": "chapel",
@@ -174,7 +325,26 @@
         "gathering",
         "teaching"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "chapel_bell",
+          "name": "Chapel Bell",
+          "state": "silent",
+          "interactions": {
+            "ring": "just_rung",
+            "let_still": "silent"
+          }
+        },
+        {
+          "id": "lectern",
+          "name": "Lectern",
+          "state": "book_closed",
+          "interactions": {
+            "open_book": "book_open",
+            "close_book": "book_closed"
+          }
+        }
+      ]
     },
     {
       "id": "ferrin_mill",
@@ -196,7 +366,35 @@
         "commerce",
         "millstream"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "millstone",
+          "name": "Millstone",
+          "state": "still",
+          "interactions": {
+            "engage": "turning",
+            "disengage": "still"
+          }
+        },
+        {
+          "id": "grain_hopper",
+          "name": "Grain Hopper",
+          "state": "empty",
+          "interactions": {
+            "fill_hopper": "full",
+            "run_through": "empty"
+          }
+        },
+        {
+          "id": "sluice_gate",
+          "name": "Sluice Gate",
+          "state": "closed",
+          "interactions": {
+            "open_gate": "open",
+            "close_gate": "closed"
+          }
+        }
+      ]
     },
     {
       "id": "hale_farm",
@@ -217,7 +415,27 @@
         "food",
         "fields"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "field_plot",
+          "name": "Field Plot",
+          "state": "fallow",
+          "interactions": {
+            "till": "tilled",
+            "sow": "sown",
+            "leave_fallow": "fallow"
+          }
+        },
+        {
+          "id": "cow_byre",
+          "name": "Cow Byre",
+          "state": "quiet",
+          "interactions": {
+            "feed_animals": "fed",
+            "muck_out": "mucked"
+          }
+        }
+      ]
     },
     {
       "id": "weaver_cottage",
@@ -235,7 +453,26 @@
       ],
       "privacy": 0.6,
       "tags": [],
-      "objects": []
+      "objects": [
+        {
+          "id": "loom",
+          "name": "Loom",
+          "state": "warped",
+          "interactions": {
+            "weave": "mid_weave",
+            "tie_off": "warped"
+          }
+        },
+        {
+          "id": "spinning_wheel",
+          "name": "Spinning Wheel",
+          "state": "idle",
+          "interactions": {
+            "spin": "spinning",
+            "stop_wheel": "idle"
+          }
+        }
+      ]
     },
     {
       "id": "tarn_cabin",
@@ -255,7 +492,26 @@
       "tags": [
         "edge_of_town"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "wood_stove",
+          "name": "Wood Stove",
+          "state": "cold",
+          "interactions": {
+            "light_stove": "burning",
+            "damp_down": "cold"
+          }
+        },
+        {
+          "id": "workbench",
+          "name": "Workbench",
+          "state": "ordered",
+          "interactions": {
+            "work_at": "cluttered",
+            "tidy": "ordered"
+          }
+        }
+      ]
     },
     {
       "id": "fenn_cottage",
@@ -273,7 +529,26 @@
       ],
       "privacy": 0.6,
       "tags": [],
-      "objects": []
+      "objects": [
+        {
+          "id": "writing_desk",
+          "name": "Writing Desk",
+          "state": "closed",
+          "interactions": {
+            "open_desk": "spread_with_papers",
+            "close_desk": "closed"
+          }
+        },
+        {
+          "id": "fenn_hearth",
+          "name": "Kitchen Hearth",
+          "state": "banked",
+          "interactions": {
+            "stoke": "lit",
+            "bank": "banked"
+          }
+        }
+      ]
     },
     {
       "id": "dunn_house",
@@ -293,7 +568,26 @@
       "tags": [
         "reeve"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "strongbox",
+          "name": "Reeve's Strongbox",
+          "state": "locked",
+          "interactions": {
+            "unlock": "unlocked",
+            "lock": "locked"
+          }
+        },
+        {
+          "id": "accounts_desk",
+          "name": "Accounts Desk",
+          "state": "cleared",
+          "interactions": {
+            "spread_accounts": "spread_with_accounts",
+            "clear_desk": "cleared"
+          }
+        }
+      ]
     },
     {
       "id": "ferrin_house",
@@ -311,7 +605,26 @@
       ],
       "privacy": 0.6,
       "tags": [],
-      "objects": []
+      "objects": [
+        {
+          "id": "supper_table",
+          "name": "Supper Table",
+          "state": "bare",
+          "interactions": {
+            "lay_table": "laid",
+            "clear_table": "bare"
+          }
+        },
+        {
+          "id": "linen_chest",
+          "name": "Linen Chest",
+          "state": "closed",
+          "interactions": {
+            "open_chest": "open",
+            "close_chest": "closed"
+          }
+        }
+      ]
     },
     {
       "id": "orchard",
@@ -332,7 +645,26 @@
         "food",
         "quiet"
       ],
-      "objects": []
+      "objects": [
+        {
+          "id": "apple_trees",
+          "name": "Apple Trees",
+          "state": "laden",
+          "interactions": {
+            "pick_apples": "picked_over",
+            "let_ripen": "laden"
+          }
+        },
+        {
+          "id": "orchard_ladder",
+          "name": "Orchard Ladder",
+          "state": "stowed",
+          "interactions": {
+            "set_ladder": "against_tree",
+            "stow_ladder": "stowed"
+          }
+        }
+      ]
     }
   ],
   "occluders": [

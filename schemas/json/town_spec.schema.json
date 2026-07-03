@@ -61,15 +61,22 @@
         },
         "tags": {"type": "array", "items": {"type": "string"}},
         "objects": {
-          "description": "Objects-with-states; still to populate (P1)",
+          "description": "Objects-with-states. interactions maps an allowed verb to the resulting state — the only way object state changes, and it is deterministic.",
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["id"],
+            "required": ["id", "name", "state", "interactions"],
+            "additionalProperties": false,
             "properties": {
-              "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
-              "name": {"type": "string"},
-              "state": {"type": "string"}
+              "id": {"description": "globally unique across the town", "type": "string", "pattern": "^[a-z0-9_]+$"},
+              "name": {"type": "string", "minLength": 1},
+              "state": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+              "interactions": {
+                "type": "object",
+                "minProperties": 1,
+                "propertyNames": {"pattern": "^[a-z0-9_]+$"},
+                "additionalProperties": {"type": "string", "pattern": "^[a-z0-9_]+$"}
+              }
             }
           }
         }
