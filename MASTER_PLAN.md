@@ -1,6 +1,6 @@
 # POLIS — MASTER PLAN
 
-**Current phase:** P0 fully closed 2026-07-03 (live serving smoked from Theseus: metis+athena, qwen3.6-35b-a3b-mtp; Postgres applied locally) · P1–P3 software complete, gates met · next: P2 gate re-run live (full 5-agent day), then P4 observer or P5 soak · **Last updated:** 2026-07-03
+**Current phase:** P0 closed; **P2 gate met LIVE 2026-07-03** (5 agents, full day on metis: 1221 completions, 0 gateway failures, replay byte-equal) · P1–P3 complete · next: pre-soak grounding fixes (dynamic schema enums), DB wiring, then P5 soak · **Last updated:** 2026-07-03
 
 Plan-of-record. `memory_bank/` is the state-of-record for narrative and decisions. Same operating protocol as glasshouse: read MEMORY_BANK context before any task; after any task update phase boxes, phase log, dashboard, activeContext/progress/decisionLog; run tests; one commit per coherent work item.
 
@@ -38,7 +38,7 @@ boot   world  minds  measure│first  ablate
 
 ## P2 — Cognition (gate: 5 agents live a coherent unscripted day; every completion logged and replayable)
 
-**Gate met 2026-07-03 on the deterministic fake model** (`tests/test_cognition_day.py`): 5 agents live a full unscripted day — plan, commute, use objects, converse, reflect, sleep — every completion logged, replay byte-equal, gateway-down degrades without crashing. **First live smoke 2026-07-03** (2 agents, morning, `--profile metis`): 29 completions, 0 gateway failures, real plans + a real 4-turn conversation, HTTPEmbedder live. The full 5-agent-day re-run against live serving is the remaining gate check.
+**Gate met 2026-07-03 on the deterministic fake model** (`tests/test_cognition_day.py`), **and re-met LIVE the same day** (`runs/p2_gate_live_metis_seed42`, local only): 5 agents, full unscripted day on metis — 1221 completions, 0 gateway failures, 132 object uses, 26 conversations, coherent contextual dialogue, **replay byte-equal from the completion log** (determinism holds with real sampled inference), HTTPEmbedder live. ~25 min wall (~1.15 s/call), 264k prompt / 79k completion tokens. Findings for pre-soak fixes: 27 intent rejections from two grounding gaps (decompositions missing `move_to` before `use_object`; hallucinated locations in agendas — fix: dynamic schema enums from town spec / location objects); real-model importance runs hot vs fake tiers (reflection trigger fires often — threshold calibration is experiment config); one era anachronism in dialogue (folds into the content rejection pass); conversation_started (26) vs conversation_ended (18) imbalance to check (sleep wind-down event emission).
 
 - [x] Memory stream: write path with importance scoring (fast tier) + embedding at write (`cognition/memory.py`; deterministic uuid5 ids). **Real embedder wired 2026-07-03:** `HTTPEmbedder` (nomic-embed-text-v1.5, 768-dim, asymmetric doc/query prefixes) via the profile `embedding:` block; HashEmbedder remains the offline stand-in (non-conforming by construction).
 - [x] Retrieval: R×I×R scorer, α/β/γ/decay/top_k in config (`cognition/retrieval.py`; min-max normalized per paper; creation-time recency decay — access-time decay noted as possible ablation). pgvector storage parity integration-tested (`tests/test_pg_memory.py`).

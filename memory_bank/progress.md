@@ -74,3 +74,10 @@ Updated: 2026-07-03
 - HTTPEmbedder (`cognition/embedding.py`): OpenAI-compatible /v1/embeddings, asymmetric nomic prefixes (`embed_query` added to the protocol; HashEmbedder aliases it prefix-free — fixtures hold), hard dim check, raises loudly. Runner wires it from the profile `embedding:` block.
 - **First live cognition run** (2 Alder agents, ticks to ~07:13, `--profile metis`): 29 completions, 0 gateway failures, real daily plans, 12 object uses, real 4-turn conversation at the Gilded Perch, salvage path exercised in production (2130/2159 completion tokens via reasoning_content).
 - Suite: 140 tests green (10 new: extras/salvage/empty-content, shipped-profile invariants, HTTPEmbedder). Remaining P2 check: full 5-agent live day.
+
+## P2 gate re-met on live serving (2026-07-03)
+
+- Full 5-agent unscripted day (`--profile metis`, seed 42, 8640 ticks, same five as the offline gate): **1221 completions, 0 gateway failures, replay byte-equal** — determinism holds with real sampled inference. 132 object uses, 26 conversations, 71 utterances; dialogue coherent and memory-grounded across the day. ~25 min wall (~1.15 s/call); 264k prompt / 79k completion tokens; salvage path carried essentially every structured call.
+- Live-only findings recorded in activeContext (pre-soak list): two grounding gaps behind 27 intent rejections (missing move_to before use_object; hallucinated agenda locations → fix = dynamic schema enums), hot importance scores (reflection 168 calls — threshold calibration to experiment config during soak), one era anachronism (content pass), conversation_ended undercount to check.
+- Soak sizing datum: 20-agent sim-week ≈ 34k calls ≈ ~11 h overnight.
+- User decisions: metis/athena are identical servers (shunt difference is version drift — treat as interchangeable); proceed to P5 (north star), P4 stays deferred.
