@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://polis.local/schemas/agent_intent.schema.json",
+  "title": "AgentIntent",
+  "description": "The action grammar (P1): the only way an agent mutates world state. Freeform strings never touch the world; anything that fails this wall is rejected.",
+  "type": "object",
+  "required": ["agent_id", "tick", "kind"],
+  "unevaluatedProperties": false,
+  "properties": {
+    "agent_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "tick": {"type": "integer", "minimum": 0},
+    "kind": {"enum": ["move_to", "use_object", "converse_with", "idle", "sleep"]}
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "kind": {"const": "move_to"},
+        "destination": {"description": "location id", "type": "string", "pattern": "^[a-z0-9_]+$"}
+      },
+      "required": ["kind", "destination"]
+    },
+    {
+      "properties": {
+        "kind": {"const": "use_object"},
+        "object_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "interaction": {"description": "verb phrase, resolved against the object's allowed states", "type": "string", "minLength": 1}
+      },
+      "required": ["kind", "object_id", "interaction"]
+    },
+    {
+      "properties": {
+        "kind": {"const": "converse_with"},
+        "partner_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "mode": {"enum": ["request", "accept", "decline"]}
+      },
+      "required": ["kind", "partner_id", "mode"]
+    },
+    {
+      "properties": {"kind": {"const": "idle"}},
+      "required": ["kind"]
+    },
+    {
+      "properties": {"kind": {"const": "sleep"}},
+      "required": ["kind"]
+    }
+  ]
+}

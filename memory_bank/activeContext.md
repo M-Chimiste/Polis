@@ -4,7 +4,7 @@ Updated: 2026-07-03
 
 ## Current state
 
-Project inception. Memory Bank drafted; MASTER_PLAN.md drafted with phases P0–P6. No code exists.
+P0 in progress. The software half of the bootstrap exists and `pytest` is green (48 tests): uv project scaffold (`sim/`, `cognition/`, `metrics/`, `observer/`, `schemas/`, `services/`), schemas v0 with generated pydantic mirrors, model gateway implemented and unit-tested against a mocked OpenAI-compatible endpoint, Postgres DDL and vLLM serving profiles recorded in-repo. The hardware half remains: apply `services/db/schema.sql` on Nyx, launch the serving profiles on Mnemosyne, smoke the gateway from the sim host.
 
 ## Current focus
 
@@ -18,4 +18,12 @@ Open fork still awaiting a call:
 
 ## Immediate next action
 
-Content rejection pass (Christian), then P0 bootstrap: repo scaffold on a Mac, uv project, schemas v0 (town_spec + agent_seed schemas formalized from the existing content), Postgres schema on Nyx, fresh model-gateway implementation smoke-tested against Mnemosyne serving profiles.
+Still pending from before: content rejection pass (Christian — names, tone, tension seeds).
+
+P0 hardware tasks (need Tailscale access to the boxes; can't run from a cloud session):
+
+1. Nyx: create the `polis` database, enable pgvector, apply `services/db/schema.sql`. Confirm the embedder choice first — the DDL carries a `vector(384)` placeholder (MiniLM-class) and changing it later is a migration.
+2. Mnemosyne: launch fast/slow tiers per `services/serving/mnemosyne/*.yaml` through the vLLM manager, reconcile those records with the manager's real config format, confirm the proxy base_url in `services/serving/profiles.yaml`.
+3. Sim host (Mac): run a gateway smoke test against the live proxy (structured output + repair path against a real model). That closes P0.
+
+Then P1: tick loop, intent validator wired to `agent_intent.schema.json`, perception, scripted-agent mode, ledger stream.

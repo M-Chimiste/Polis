@@ -1,0 +1,40 @@
+# Named hardware profiles for the model gateway.
+#
+# Sampling is per-model per-role — no global policy, no temperature-0
+# requirement anywhere. The experiment config hash covers the role/sampling
+# block, so changing any value here (copied into an experiment config) makes
+# a distinct experiment by construction.
+#
+# Values below are initial defaults, PENDING the P0 smoke test from the sim
+# host (Mac) against the Mnemosyne vLLM proxy. base_url is the Tailscale
+# name; confirm host/port at smoke time.
+#
+# Judge tier (offline believability scoring) is deliberately absent: it uses
+# whatever TheseusInsight currently uses and is never on the hot path.
+profiles:
+  mnemosyne:
+    base_url: http://mnemosyne:8000/v1
+    tiers:
+      fast: # 8B class, GPU0, high concurrency
+        model: Qwen/Qwen3-8B
+      slow: # 32-70B class, GPU1, batched, low priority
+        model: Qwen/Qwen3-32B
+    roles:
+      dialogue:
+        tier: fast
+        sampling: {temperature: 0.9, top_p: 0.95, max_tokens: 512}
+      importance:
+        tier: fast
+        sampling: {temperature: 0.2, max_tokens: 16}
+      action_selection:
+        tier: fast
+        sampling: {temperature: 0.7, top_p: 0.95, max_tokens: 256}
+      reflection:
+        tier: slow
+        sampling: {temperature: 0.8, top_p: 0.95, max_tokens: 1024}
+      daily_planning:
+        tier: slow
+        sampling: {temperature: 0.8, top_p: 0.95, max_tokens: 1024}
+      decomposition:
+        tier: slow
+        sampling: {temperature: 0.6, top_p: 0.95, max_tokens: 768}

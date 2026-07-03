@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://polis.local/schemas/agent_seed.schema.json",
+  "title": "AgentSeed",
+  "description": "One agent seed file (content/agents/{id}.json). Relationships live only in content/relationships.json.",
+  "type": "object",
+  "required": ["id", "name", "age", "occupation", "home", "workplace", "traits", "bio", "daily_anchors", "initial_memories"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "name": {"type": "string", "minLength": 1},
+    "age": {"type": "integer", "minimum": 0},
+    "occupation": {"type": "string", "minLength": 1},
+    "home": {"description": "location id", "type": "string", "pattern": "^[a-z0-9_]+$"},
+    "workplace": {"description": "location id", "type": "string", "pattern": "^[a-z0-9_]+$"},
+    "traits": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+    "bio": {"type": "string", "minLength": 1},
+    "daily_anchors": {
+      "type": "object",
+      "required": ["wake", "work_start", "midday_meal", "work_end", "sleep"],
+      "additionalProperties": false,
+      "properties": {
+        "wake": {"$ref": "#/$defs/hhmm"},
+        "work_start": {"$ref": "#/$defs/hhmm"},
+        "midday_meal": {"$ref": "#/$defs/hhmm"},
+        "work_end": {"$ref": "#/$defs/hhmm"},
+        "sleep": {"$ref": "#/$defs/hhmm"},
+        "evening_habit": {"description": "free text, not a time", "type": "string", "minLength": 1}
+      }
+    },
+    "initial_memories": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1}
+  },
+  "$defs": {
+    "hhmm": {"type": "string", "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"}
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://polis.local/schemas/ledger_event.schema.json",
+  "title": "LedgerEvent",
+  "description": "One row in the append-only run ledger — the permanent wall. Byte-equal ledger fixtures guard the sim core; metrics post-process this stream and never read sim internals live.",
+  "type": "object",
+  "required": ["run_id", "seq", "tick", "kind", "agent_id", "data"],
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {"type": "string", "format": "uuid"},
+    "seq": {"description": "monotonic per-run sequence number", "type": "integer", "minimum": 0},
+    "tick": {"type": "integer", "minimum": 0},
+    "kind": {
+      "description": "event kind, e.g. agent_moved, conversation_started, utterance, object_state_changed, treatment_injected; the set grows with the sim",
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "agent_id": {
+      "description": "null for world-level events",
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "data": {"description": "kind-specific payload", "type": "object"}
+  }
+}

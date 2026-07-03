@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 POLIS is a research instrument for studying emergent social behavior in LLM-backed generative agents (a faithful implementation of Park et al. 2023's Generative Agents, running on local models, instrumented for measurement). It is glasshouse's sibling, not its sequel: glasshouse is a show, POLIS is an experiment, and **zero glasshouse code is imported** — proven patterns are reimplemented from spec only.
 
-**Current state: pre-code.** The repo contains the plan (`MASTER_PLAN.md`), the state-of-record docs (`memory_bank/`), the frozen v1 world content (`content/`), and content tooling (`scripts/`). The Python sim scaffold (P0) does not exist yet.
+**Current state: P0 in progress.** The uv project scaffold, schemas v0, and the model gateway exist and are tested; the sim itself (P1+) does not exist yet. `MASTER_PLAN.md` tracks phase state; `memory_bank/` is the state-of-record.
 
 ## Operating protocol (required)
 
@@ -16,12 +16,17 @@ POLIS is a research instrument for studying emergent social behavior in LLM-back
 ## Commands
 
 ```bash
+uv sync                               # install deps (Python 3.12, uv-managed)
+uv run pytest                         # full suite; single test: uv run pytest tests/test_gateway.py -k repair
 python3 scripts/validate_content.py   # run after ANY hand edit to content/; exits nonzero on failure
+./scripts/gen_models.sh               # regenerate pydantic mirrors after ANY edit to schemas/json/
 ```
 
 Do **not** re-run `scripts/generate_content.py`: it regenerates from scratch and clobbers hand edits. The town was generated once and frozen (decision 2026-07-03); the generator is historical record. Edit `content/*.json` directly and validate.
 
-Once P0 lands: uv-managed Python 3.12, `pytest` for sim/cognition/metrics, `vitest` for the observer.
+Do **not** hand-edit `schemas/models/` — it is generated. Edit the JSON Schema in `schemas/json/` (the source of truth) and run `./scripts/gen_models.sh`.
+
+The observer (P4, not started) will use `vitest`.
 
 ## The prime directive: no narrative injection
 
@@ -41,7 +46,7 @@ Determinism: sampling with temperature > 0 is allowed; reproducibility comes fro
 
 Contracts: JSON Schema is the source of truth for all cross-boundary data (Ajv on the TS side, pydantic mirrors on the Python side). Never invent shapes a schema already defines.
 
-Planned scaffold: `sim/`, `cognition/`, `metrics/`, `observer/`, `schemas/`, `services/`.
+Layout: `sim/` (world core, content loaders), `cognition/` (P2), `metrics/` (P3), `observer/` (P4 stub), `schemas/` (`json/` source of truth + generated `models/`), `services/` (`gateway/` model gateway, `serving/` profiles, `db/` DDL), `tests/`. The gateway returns typed `GatewayCompletion | GatewayFailure` results and never raises — callers branch, they don't catch.
 
 ## Infrastructure
 

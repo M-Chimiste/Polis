@@ -1,0 +1,12 @@
+# Slow tier — reflection synthesis, daily planning, plan decomposition.
+# PENDING smoke test; reconcile with the vLLM manager's actual config format.
+# tp fork (open): tp=1 on GPU1 (this file) vs tp=2 one larger model — measure in P2.
+model: Qwen/Qwen3-32B
+tensor_parallel_size: 1
+gpu: 1
+port: 8002 # behind the vLLM manager proxy at :8000
+max_model_len: 16384
+served_model_name: Qwen/Qwen3-32B
+# Reasoning capped at launch, not per-request (glasshouse qwen3.6 lesson).
+reasoning_budget: 1024
+notes: batched, low priority; throughput workload, latency-tolerant

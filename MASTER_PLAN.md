@@ -1,6 +1,6 @@
 # POLIS — MASTER PLAN
 
-**Current phase:** P0 not started · **Last updated:** 2026-07-03
+**Current phase:** P0 in progress — software half done, hardware half (Nyx/Mnemosyne) pending · **Last updated:** 2026-07-03
 
 Plan-of-record. `memory_bank/` is the state-of-record for narrative and decisions. Same operating protocol as glasshouse: read MEMORY_BANK context before any task; after any task update phase boxes, phase log, dashboard, activeContext/progress/decisionLog; run tests; one commit per coherent work item.
 
@@ -21,11 +21,11 @@ boot   world  minds  measure│first  ablate
 
 ## P0 — Bootstrap (gate: `pytest` green on a walking skeleton)
 
-- [ ] Repo scaffold: uv project, `sim/`, `cognition/`, `metrics/`, `observer/`, `schemas/`, `services/`.
-- [ ] Model gateway, from scratch: validation wall + structured outputs + one repair re-prompt + named hardware profiles + **per-model/per-role sampling config** (glasshouse pattern reimplemented, zero code import); smoke against Mnemosyne vLLM proxy profile from the sim host (Mac).
-- [ ] Schemas v0: `ledger_event`, `agent_intent`, `memory_record`, `experiment_config`, `probe_result`. Pydantic mirrors generated.
-- [ ] Postgres schema on Nyx (pgvector enabled): runs, agents, memory_records, ledger_events, completions, probes, metrics.
-- [ ] vLLM serving profiles on Mnemosyne: fast tier (8B, GPU0) + slow tier (32–70B, GPU1), reasoning capped at launch; record profile configs in-repo.
+- [x] Repo scaffold: uv project, `sim/`, `cognition/`, `metrics/`, `observer/`, `schemas/`, `services/`.
+- [x] Model gateway, from scratch: validation wall + structured outputs + one repair re-prompt + named hardware profiles + **per-model/per-role sampling config** (glasshouse pattern reimplemented, zero code import) — `services/gateway/`, unit-tested against a mocked endpoint. **Pending: smoke against Mnemosyne vLLM proxy profile from the sim host (Mac).**
+- [x] Schemas v0: `ledger_event`, `agent_intent`, `memory_record`, `experiment_config`, `probe_result` + `town_spec`/`agent_seed`/`relationships` formalized from content. Pydantic mirrors generated (`scripts/gen_models.sh`).
+- [ ] Postgres schema on Nyx (pgvector enabled): DDL authored in-repo (`services/db/schema.sql`: runs, agents, memory_records, plans, ledger_events, completions, probes, metrics). **Pending: apply on Nyx** (embedding dim 384 placeholder — confirm embedder first).
+- [ ] vLLM serving profiles on Mnemosyne: fast tier (8B, GPU0) + slow tier (32–70B, GPU1), reasoning capped at launch; profile configs recorded in-repo (`services/serving/`). **Pending: launch + reconcile with the vLLM manager's config format.**
 
 ## P1 — World core (gate: byte-equal ledger fixture across two headless runs, no LLM)
 

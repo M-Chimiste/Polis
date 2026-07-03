@@ -1,0 +1,11 @@
+# Fast tier — dialogue turns, importance scoring, action selection.
+# PENDING smoke test; reconcile with the vLLM manager's actual config format.
+model: Qwen/Qwen3-8B
+tensor_parallel_size: 1
+gpu: 0
+port: 8001 # behind the vLLM manager proxy at :8000
+max_model_len: 8192
+served_model_name: Qwen/Qwen3-8B
+# Reasoning capped at launch, not per-request (glasshouse qwen3.6 lesson).
+reasoning_budget: 0
+notes: continuous batching, high concurrency; structured outputs (guided json) required
