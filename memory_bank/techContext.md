@@ -3,7 +3,7 @@
 ## Stack
 
 - **Sim core:** Python 3.12, single authoritative process. Discrete tick (default 1 tick = 10 sim-seconds), pure-function world step where possible. asyncio for cognition dispatch. Not FastAPI — the sim is a process, not a service; a thin FastAPI sidecar exposes the live ledger stream (WebSocket) and control endpoints (start/stop/checkpoint).
-- **Why Python, not Rust/Bevy:** the sim tick is trivial (grid pathfinding, proximity, object state for ≤25 agents); the bottleneck is LLM latency. Python keeps the cognition stack, measurement harness, and TheseusInsight tooling in one language. Vivarium keeps the Rust/wgpu ambitions; POLIS does not need them.
+- **Why Python, not Rust/Bevy:** the sim tick is trivial (grid pathfinding, proximity, object state for ≤25 agents); the bottleneck is LLM latency. Python keeps the cognition stack and measurement harness in one language. Vivarium keeps the Rust/wgpu ambitions; POLIS does not need them.
 - **Cognition serving:** vLLM on Mnemosyne via the existing containerized vLLM manager proxy. Batched, continuous batching is the whole point — reflection and planning calls are throughput workloads.
 - **Embeddings:** small embedder served on Nyx or in-process (sentence-transformers class); pgvector for retrieval.
 - **Persistence:** Postgres + pgvector on Nyx. Schema: runs, agents, memory_records (with embedding), plans, ledger_events, completions (verbatim request+response for replay), probes, metrics.
@@ -28,7 +28,7 @@ Sampling parameters (temperature, top_p, top_k, min_p, max_tokens, reasoning bud
 
 - **Fast tier** (dialogue turns, importance scoring, action selection within plan): Qwen3-class 8B, structured outputs, high concurrency.
 - **Slow tier** (reflection synthesis, daily planning, plan decomposition): 32–70B class, batched, low priority. Reasoning budget capped server-side at vLLM launch (the glasshouse qwen3.6 lesson: request-level enable_thinking may be ignored; cap at the server).
-- **Judge tier** (offline, believability probes): whatever TheseusInsight currently uses; not on the hot path.
+- **Judge tier** (offline, believability probes): a generic LLM-as-judge with a rubric, model chosen at hardware time; not on the hot path.
 
 ## Determinism & replay (decided)
 

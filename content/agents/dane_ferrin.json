@@ -1,0 +1,26 @@
+{
+  "id": "dane_ferrin",
+  "name": "Dane Ferrin",
+  "age": 41,
+  "occupation": "carter",
+  "home": "ferrin_house",
+  "workplace": "market_square",
+  "traits": [
+    "easygoing",
+    "worldly",
+    "avoids conflict"
+  ],
+  "bio": "Dane hauls Harrowmere's goods to the river towns and returns with cargo, news, and a manner just a shade too relaxed for his wife's accounting. He's the village's window to elsewhere, and he likes being missed slightly more than being home.",
+  "daily_anchors": {
+    "wake": "06:30",
+    "work_start": "07:30",
+    "midday_meal": "13:00",
+    "work_end": "18:00",
+    "evening_habit": "a long pint and longer stories at the Perch",
+    "sleep": "22:30"
+  },
+  "initial_memories": [
+    "The river towns are paying half again over spring prices for good flour.",
+    "Josta counts the days I'm gone. I should bring her something from the river."
+  ]
+}

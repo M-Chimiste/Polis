@@ -42,4 +42,4 @@ Metrics never read sim internals live; they post-process the ledger and the memo
 
 ## Contracts
 
-All cross-boundary data (intents, ledger events, memory records, probe results, experiment configs) is JSON-Schema-defined, Ajv-validated in TS, pydantic-mirrored in Python. One repair re-prompt on model output validation failure, then a typed error object (agent_model_service wall, reused).
+All cross-boundary data (intents, ledger events, memory records, probe results, experiment configs) is JSON-Schema-defined, Ajv-validated in TS, pydantic-mirrored in Python. One repair re-prompt on model output validation failure, then a typed error object (glasshouse gateway-wall pattern, reimplemented from scratch).

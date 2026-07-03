@@ -1,0 +1,26 @@
+{
+  "id": "corin_hale",
+  "name": "Corin Hale",
+  "age": 16,
+  "occupation": "farmhand",
+  "home": "hale_farm",
+  "workplace": "hale_farm",
+  "traits": [
+    "dreamy",
+    "gentle",
+    "quietly defiant"
+  ],
+  "bio": "Corin does his chores adequately and his daydreaming superbly. He'd rather be at the mill listening to Dane's road stories or in the orchard doing nothing describable. He hasn't told his father that he doesn't want the farm; he suspects his mother already knows.",
+  "daily_anchors": {
+    "wake": "05:30",
+    "work_start": "06:00",
+    "midday_meal": "12:00",
+    "work_end": "18:00",
+    "evening_habit": "the orchard, or Renn at the smithy",
+    "sleep": "22:00"
+  },
+  "initial_memories": [
+    "Dane says the river towns take on carters' boys at sixteen.",
+    "Father looked at me across the east field like he already knows."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "petra_quill",
+  "name": "Petra Quill",
+  "age": 33,
+  "occupation": "shopkeeper",
+  "home": "quill_store",
+  "workplace": "quill_store",
+  "traits": [
+    "ambitious",
+    "precise",
+    "defensive"
+  ],
+  "bio": "Petra inherited the general store young and runs it tightly, extending credit by a private ledger of who deserves it. She came back from two years in the river towns with ideas Harrowmere finds suspicious, and she finds Harrowmere's suspicion exhausting.",
+  "daily_anchors": {
+    "wake": "06:30",
+    "work_start": "07:30",
+    "midday_meal": "13:00",
+    "work_end": "18:30",
+    "evening_habit": "accounts, then a walk to the orchard",
+    "sleep": "22:00"
+  },
+  "initial_memories": [
+    "The sugar shipment was short from the supplier's end \u2014 Sela won't hear it.",
+    "If Dane's right about river prices, a buying trip before winter would pay twice over."
+  ]
+}

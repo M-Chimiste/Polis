@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://polis.local/schemas/probe_result.schema.json",
+  "title": "ProbeResult",
+  "description": "Result of one probe (interview or fact check) run against a FROZEN copy of agent state. Probe traffic must be invisible to the sim: probe run => zero memory/ledger diff.",
+  "type": "object",
+  "required": ["probe_id", "run_id", "agent_id", "kind", "tick", "question", "response"],
+  "additionalProperties": false,
+  "properties": {
+    "probe_id": {"type": "string", "format": "uuid"},
+    "run_id": {"type": "string", "format": "uuid"},
+    "agent_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "kind": {"enum": ["interview", "fact_check"]},
+    "tick": {"description": "sim tick of the frozen state the probe ran against", "type": "integer", "minimum": 0},
+    "question": {"type": "string", "minLength": 1},
+    "response": {"type": "string"},
+    "category": {"description": "Park interview category for believability batteries", "type": "string"},
+    "scores": {
+      "description": "judge scores, e.g. {\"believability\": 7} or {\"knows_fact\": true}",
+      "type": "object",
+      "additionalProperties": {"type": ["number", "boolean", "string"]}
+    },
+    "frozen_state_ref": {"description": "reference to the archived frozen-state snapshot", "type": "string"}
+  }
+}

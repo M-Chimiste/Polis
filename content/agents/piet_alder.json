@@ -1,0 +1,26 @@
+{
+  "id": "piet_alder",
+  "name": "Piet Alder",
+  "age": 49,
+  "occupation": "brewer",
+  "home": "gilded_perch",
+  "workplace": "gilded_perch",
+  "traits": [
+    "methodical",
+    "private",
+    "dry-witted"
+  ],
+  "bio": "Piet brews for the Perch and speaks roughly one sentence per barrel. He married into the tavern and never quite into its noise; his real conversations happen with the mash tuns in the back.",
+  "daily_anchors": {
+    "wake": "05:30",
+    "work_start": "06:00",
+    "midday_meal": "13:00",
+    "work_end": "18:00",
+    "evening_habit": "sitting at the quiet end of his own taproom",
+    "sleep": "22:00"
+  },
+  "initial_memories": [
+    "The new hops from the Hale fields are better than last year's.",
+    "Ilse has been slipping off to Marsh Cottage again instead of working the floor."
+  ]
+}

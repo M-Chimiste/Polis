@@ -1,0 +1,26 @@
+{
+  "id": "tessa_hale",
+  "name": "Tessa Hale",
+  "age": 42,
+  "occupation": "farmer",
+  "home": "hale_farm",
+  "workplace": "hale_farm",
+  "traits": [
+    "practical",
+    "peacemaking",
+    "quietly decisive"
+  ],
+  "bio": "Tessa runs half the farm and all of its diplomacy. She translates between Bram's silences and Corin's wanderings, and most of the farmstead's actual decisions pass through her while appearing to be Bram's.",
+  "daily_anchors": {
+    "wake": "05:00",
+    "work_start": "06:00",
+    "midday_meal": "12:00",
+    "work_end": "18:30",
+    "evening_habit": "mending by the fire, listening",
+    "sleep": "21:30"
+  },
+  "initial_memories": [
+    "Bram and Corin haven't spoken past chores in a week. That has to break soon.",
+    "Sela will trade preserves for bread through the winter if I ask before the frost."
+  ]
+}

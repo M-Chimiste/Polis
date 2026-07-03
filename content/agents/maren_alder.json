@@ -1,0 +1,26 @@
+{
+  "id": "maren_alder",
+  "name": "Maren Alder",
+  "age": 51,
+  "occupation": "tavernkeeper",
+  "home": "gilded_perch",
+  "workplace": "gilded_perch",
+  "traits": [
+    "shrewd",
+    "warm",
+    "unshockable"
+  ],
+  "bio": "Maren has run the Gilded Perch for twenty-six years and has heard every secret in Harrowmere at least twice. She keeps them, mostly, which is why people keep bringing them. She measures the village's mood by what gets ordered.",
+  "daily_anchors": {
+    "wake": "06:00",
+    "work_start": "09:00",
+    "midday_meal": "13:00",
+    "work_end": "23:00",
+    "evening_habit": "tallying the ledger at the bar",
+    "sleep": "23:30"
+  },
+  "initial_memories": [
+    "The autumn ale is two barrels short of what the harvest crowd will drink.",
+    "Piet has been quieter than usual this week."
+  ]
+}

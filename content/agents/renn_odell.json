@@ -1,0 +1,26 @@
+{
+  "id": "renn_odell",
+  "name": "Renn Odell",
+  "age": 17,
+  "occupation": "smith's apprentice",
+  "home": "vosse_smithy",
+  "workplace": "vosse_smithy",
+  "traits": [
+    "eager",
+    "thin-skinned",
+    "hardworking"
+  ],
+  "bio": "Renn sleeps in the smithy loft and is trying to hammer himself into someone Harrowmere will keep. He watches Garrick for signs of approval the way farmers watch for rain, and spends what little he earns at Sela's stall because she talks to him like a grown man.",
+  "daily_anchors": {
+    "wake": "06:00",
+    "work_start": "07:00",
+    "midday_meal": "12:30",
+    "work_end": "18:30",
+    "evening_habit": "practicing scrollwork on scrap iron",
+    "sleep": "22:30"
+  },
+  "initial_memories": [
+    "Garrick let me handle the chapel lamp bracket alone. He didn't redo it after.",
+    "Corin Hale is the only one my age who doesn't treat me like a stray."
+  ]
+}

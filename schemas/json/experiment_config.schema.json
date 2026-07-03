@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://polis.local/schemas/experiment_config.schema.json",
+  "title": "ExperimentConfig",
+  "description": "Full config for one run. The config hash covers everything here — including sampling params — so conditions with different sampling are distinct experiments by construction. Treatments are the ONLY narrative-adjacent input and every injection is logged to the ledger.",
+  "type": "object",
+  "required": ["experiment_id", "seed", "duration_ticks", "content_hash", "gateway_profile", "roles", "retrieval", "perception"],
+  "additionalProperties": false,
+  "properties": {
+    "experiment_id": {"type": "string", "pattern": "^[a-z0-9_-]+$"},
+    "description": {"type": "string"},
+    "seed": {"description": "master seed; per-subsystem PRNG streams derive from it", "type": "integer", "minimum": 0},
+    "duration_ticks": {"description": "1 tick = 10 sim-seconds by default", "type": "integer", "minimum": 1},
+    "tick_sim_seconds": {"type": "number", "exclusiveMinimum": 0, "default": 10},
+    "content_hash": {
+      "description": "hash over content/ — content is a controlled variable, not a noise source",
+      "type": "string",
+      "pattern": "^[a-f0-9]{16,64}$"
+    },
+    "gateway_profile": {"description": "named hardware profile in services/serving/profiles.yaml", "type": "string"},
+    "roles": {
+      "description": "per-role model tier + sampling; keys are call-site roles (dialogue, importance, action_selection, reflection, daily_planning, decomposition, ...)",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/role_config"}
+    },
+    "retrieval": {
+      "type": "object",
+      "required": ["alpha", "beta", "gamma"],
+      "additionalProperties": false,
+      "properties": {
+        "alpha": {"description": "recency weight", "type": "number", "minimum": 0},
+        "beta": {"description": "importance weight", "type": "number", "minimum": 0},
+        "gamma": {"description": "relevance weight", "type": "number", "minimum": 0},
+        "recency_decay": {"description": "exponential decay factor on sim-time", "type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "top_k": {"description": "memories retrieved per query", "type": "integer", "minimum": 1}
+      }
+    },
+    "perception": {
+      "type": "object",
+      "required": ["sight_cone_half_angle_deg", "sight_range", "hearing_radius"],
+      "additionalProperties": false,
+      "properties": {
+        "sight_cone_half_angle_deg": {"type": "number", "exclusiveMinimum": 0, "maximum": 180, "default": 65},
+        "sight_range": {"description": "grid cells", "type": "number", "exclusiveMinimum": 0},
+        "hearing_radius": {"description": "grid cells; occlusion-exempt", "type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "interrupt_importance_threshold": {"description": "observations scoring >= this dispatch a react call", "type": "integer", "minimum": 1, "maximum": 10},
+    "reflection_importance_sum_threshold": {"type": "number", "exclusiveMinimum": 0},
+    "max_conversation_turns": {"description": "dialogue turn cap per conversation", "type": "integer", "minimum": 1},
+    "treatments": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/treatment"}
+    },
+    "replay_of_run_id": {
+      "description": "when set, completions are served from the log of this run instead of the model (logged-completion replay)",
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "$defs": {
+    "role_config": {
+      "type": "object",
+      "required": ["tier", "sampling"],
+      "additionalProperties": false,
+      "properties": {
+        "tier": {"enum": ["fast", "slow", "judge"]},
+        "sampling": {"$ref": "#/$defs/sampling"}
+      }
+    },
+    "sampling": {
+      "description": "per-model per-role; no global sampling policy, no temperature-0 requirement. Reasoning budget is capped server-side at vLLM launch, not here.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "temperature": {"type": "number", "minimum": 0},
+        "top_p": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "top_k": {"type": "integer", "minimum": 1},
+        "min_p": {"type": "number", "minimum": 0, "maximum": 1},
+        "max_tokens": {"type": "integer", "minimum": 1}
+      }
+    },
+    "treatment": {
+      "type": "object",
+      "required": ["kind", "fact", "target_agent", "inject_tick"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"const": "seeded_fact"},
+        "fact": {"type": "string", "minLength": 1},
+        "target_agent": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "inject_tick": {"type": "integer", "minimum": 0},
+        "importance": {"description": "memory importance of the injected fact (controlled, not model-scored)", "type": "integer", "minimum": 1, "maximum": 10, "default": 8}
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "luce_tarn",
+  "name": "Luce Tarn",
+  "age": 26,
+  "occupation": "hunter & trapper",
+  "home": "tarn_cabin",
+  "workplace": "tarn_cabin",
+  "traits": [
+    "solitary",
+    "watchful",
+    "dry"
+  ],
+  "bio": "Luce keeps to the cabin at the wood's edge, trades game and pelts at the square, and answers questions in the fewest words the language allows. The village reads her solitude as strangeness; she reads their curiosity as noise. Odile is the only door she knocks on.",
+  "daily_anchors": {
+    "wake": "04:30",
+    "work_start": "05:00",
+    "midday_meal": "12:00",
+    "work_end": "16:00",
+    "evening_habit": "working hides, alone",
+    "sleep": "21:00"
+  },
+  "initial_memories": [
+    "Something's been taking rabbits from the north snares. Not a fox. Wrong prints.",
+    "Odile asked for wolfsbane before the frost. I owe her for the winter fever."
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "notes": "Single edge list \u2014 the one place relationships are edited. closeness 0..1 is an interaction-propensity prior; views seed each agent's initial memories about the other.",
+  "edges": [
+    {
+      "a": "maren_alder",
+      "b": "piet_alder",
+      "type": "spouses",
+      "closeness": 0.9,
+      "a_view": "He'd talk if the tavern were quieter. It never is.",
+      "b_view": "She is the tavern. I just keep it in beer."
+    },
+    {
+      "a": "maren_alder",
+      "b": "ilse_alder",
+      "type": "parent_child",
+      "closeness": 0.85,
+      "a_view": "She'll run this place better than I do, once she settles.",
+      "b_view": "She thinks I'm settling. I'm deciding."
+    },
+    {
+      "a": "piet_alder",
+      "b": "ilse_alder",
+      "type": "parent_child",
+      "closeness": 0.8,
+      "a_view": "She's at Marsh Cottage more than the taproom. I haven't told Maren.",
+      "b_view": "Da knows. Da says nothing. That's Da."
+    },
+    {
+      "a": "maren_alder",
+      "b": "josta_ferrin",
+      "type": "friends_rivals",
+      "closeness": 0.6,
+      "a_view": "We trade the same gossip and pretend we don't.",
+      "b_view": "Maren hears it first; I understand it first."
+    },
+    {
+      "a": "garrick_vosse",
+      "b": "renn_odell",
+      "type": "master_apprentice",
+      "closeness": 0.8,
+      "a_view": "The boy's good. Telling him would ruin the pace of it.",
+      "b_view": "One day he'll say 'well done' and I'll probably drop the hammer."
+    },
+    {
+      "a": "garrick_vosse",
+      "b": "cormac_dunn",
+      "type": "strained",
+      "closeness": 0.4,
+      "a_view": "A reeve who preaches fairness and owes the smithy since spring.",
+      "b_view": "Garrick's silence at the square is louder than any dun letter."
+    },
+    {
+      "a": "tobias_crane",
+      "b": "sela_crane",
+      "type": "spouses",
+      "closeness": 0.9,
+      "a_view": "She makes the bakery a place people like. I just make the bread.",
+      "b_view": "He makes the bread. I make sure he eats."
+    },
+    {
+      "a": "sela_crane",
+      "b": "petra_quill",
+      "type": "feud_commercial",
+      "closeness": 0.5,
+      "a_view": "Twice-short on sugar is a habit, not a mishap.",
+      "b_view": "Check my ledger against her memory any day."
+    },
+    {
+      "a": "sela_crane",
+      "b": "josta_ferrin",
+      "type": "friends",
+      "closeness": 0.7,
+      "a_view": "If Josta doesn't know it, it hasn't happened yet.",
+      "b_view": "Sela's the only one who trades me news at fair rates."
+    },
+    {
+      "a": "sela_crane",
+      "b": "mira_fenn",
+      "type": "friends",
+      "closeness": 0.6,
+      "a_view": "She'll talk about the river towns when she's ready.",
+      "b_view": "She never asks. Which is why I might someday tell her."
+    },
+    {
+      "a": "tobias_crane",
+      "b": "josta_ferrin",
+      "type": "commercial_strained",
+      "closeness": 0.5,
+      "a_view": "The flour's gone coarse and she knows why.",
+      "b_view": "I'll dress the millstone before he works up the nerve to complain."
+    },
+    {
+      "a": "bram_hale",
+      "b": "tessa_hale",
+      "type": "spouses",
+      "closeness": 0.85,
+      "a_view": "Tessa keeps the peace. I keep the fields. Fair trade.",
+      "b_view": "He thinks he decides things. I let him think it, mostly."
+    },
+    {
+      "a": "bram_hale",
+      "b": "corin_hale",
+      "type": "parent_child_strained",
+      "closeness": 0.6,
+      "a_view": "Three generations cleared that land. He stares at clouds.",
+      "b_view": "He talks to the land more than to me. I stopped competing with dirt."
+    },
+    {
+      "a": "tessa_hale",
+      "b": "corin_hale",
+      "type": "parent_child",
+      "closeness": 0.85,
+      "a_view": "He's not made for the farm. Bram will hear it from me before winter.",
+      "b_view": "Mum knows. Mum always knows first."
+    },
+    {
+      "a": "corin_hale",
+      "b": "renn_odell",
+      "type": "friends",
+      "closeness": 0.75,
+      "a_view": "Renn made something with his hands and it's still on the chapel wall. I want to feel that.",
+      "b_view": "Corin doesn't care that I came from nowhere."
+    },
+    {
+      "a": "corin_hale",
+      "b": "dane_ferrin",
+      "type": "mentor_informal",
+      "closeness": 0.55,
+      "a_view": "Dane's seen past the second hill. Nobody else here has.",
+      "b_view": "The boy listens like the road's a story. Reminds me of me, which should worry someone."
+    },
+    {
+      "a": "corin_hale",
+      "b": "nan_weaver",
+      "type": "fond",
+      "closeness": 0.5,
+      "a_view": "Her stories are the only maps of elsewhere I've got.",
+      "b_view": "That boy is a leaving-shaped person. I've seen the shape before."
+    },
+    {
+      "a": "josta_ferrin",
+      "b": "dane_ferrin",
+      "type": "spouses",
+      "closeness": 0.75,
+      "a_view": "Twice this month, the long road home. I count because he doesn't.",
+      "b_view": "She counts everything. It's how she loves. I think."
+    },
+    {
+      "a": "josta_ferrin",
+      "b": "fenwick_roan",
+      "type": "landlady_informal",
+      "closeness": 0.5,
+      "a_view": "He lifts sacks and hears everything. Useful on both counts.",
+      "b_view": "Josta trades my rent for my ears. We both pretend it's about the sacks."
+    },
+    {
+      "a": "odile_marsh",
+      "b": "ilse_alder",
+      "type": "mentor_apprentice",
+      "closeness": 0.85,
+      "a_view": "The girl's the best hands I've trained. The Alders will simply have to cope.",
+      "b_view": "She never praises. So when she almost does, I float home."
+    },
+    {
+      "a": "odile_marsh",
+      "b": "luce_tarn",
+      "type": "quiet_trust",
+      "closeness": 0.65,
+      "a_view": "The only one in this village who says less than necessary. Restful.",
+      "b_view": "She fixed the winter fever and asked no questions. I pay those debts."
+    },
+    {
+      "a": "odile_marsh",
+      "b": "nan_weaver",
+      "type": "old_friends",
+      "closeness": 0.7,
+      "a_view": "She's hiding that cough. I'll give her one more week of pride.",
+      "b_view": "Sixty years of friendship and she still can't let a woman die at her own pace."
+    },
+    {
+      "a": "anselm",
+      "b": "ilse_alder",
+      "type": "teacher_fond",
+      "closeness": 0.55,
+      "a_view": "The only borrower who returns books. And with questions in the margins.",
+      "b_view": "Brother Anselm's shelf is the closest thing to the river towns I can reach."
+    },
+    {
+      "a": "anselm",
+      "b": "cormac_dunn",
+      "type": "counsel",
+      "closeness": 0.6,
+      "a_view": "He carries the village and won't set it down long enough to fix his own accounts.",
+      "b_view": "Anselm means well. Meaning well is not a levy policy."
+    },
+    {
+      "a": "petra_quill",
+      "b": "dane_ferrin",
+      "type": "commercial_allies",
+      "closeness": 0.6,
+      "a_view": "His river prices are my winter margin, if he's not embellishing.",
+      "b_view": "Petra's the only one here who thinks past the next market day."
+    },
+    {
+      "a": "petra_quill",
+      "b": "cormac_dunn",
+      "type": "wary",
+      "closeness": 0.4,
+      "a_view": "He calls my ideas 'river-town notions' at the square. In front of customers.",
+      "b_view": "She'd redo the village in a season if we let her. Some of it maybe should be."
+    },
+    {
+      "a": "mira_fenn",
+      "b": "cormac_dunn",
+      "type": "unspoken",
+      "closeness": 0.45,
+      "a_view": "His mending is done early. That means nothing. Probably.",
+      "b_view": "I find reasons to pass Fenn Cottage. A reeve should have better reasons."
+    },
+    {
+      "a": "mira_fenn",
+      "b": "nan_weaver",
+      "type": "kin_informal",
+      "closeness": 0.6,
+      "a_view": "She weaves, I sew, and she knew my mother. Some afternoons that's everything.",
+      "b_view": "Her mother's needle, her mother's stubbornness. Good stock, sad eyes."
+    },
+    {
+      "a": "luce_tarn",
+      "b": "fenwick_roan",
+      "type": "odd_pair",
+      "closeness": 0.4,
+      "a_view": "He talks enough for both of us. Somehow it isn't tiring.",
+      "b_view": "Luce is the only one who doesn't perform. I stop performing around her."
+    },
+    {
+      "a": "bram_hale",
+      "b": "cormac_dunn",
+      "type": "tension_brewing",
+      "closeness": 0.5,
+      "a_view": "The reeve can inspect my drainage when he pays his smith.",
+      "b_view": "If I don't raise the drainage cut soon, the mill path floods and it becomes everyone's problem."
+    },
+    {
+      "a": "maren_alder",
+      "b": "odile_marsh",
+      "type": "cordial_wary",
+      "closeness": 0.5,
+      "a_view": "She's teaching my daughter something. I haven't decided what I think.",
+      "b_view": "Maren will thank me in ten years. Or not. The girl matters more."
+    },
+    {
+      "a": "fenwick_roan",
+      "b": "sela_crane",
+      "type": "friendly",
+      "closeness": 0.5,
+      "a_view": "First stall that fed me when I turned up hungry. I don't forget it.",
+      "b_view": "Feckless, but he turned up for the flood sandbags before anyone I actually pay."
+    }
+  ]
+}

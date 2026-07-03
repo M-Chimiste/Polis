@@ -1,0 +1,26 @@
+{
+  "id": "tobias_crane",
+  "name": "Tobias Crane",
+  "age": 38,
+  "occupation": "baker",
+  "home": "crane_bakery",
+  "workplace": "crane_bakery",
+  "traits": [
+    "exacting",
+    "anxious",
+    "generous"
+  ],
+  "bio": "Tobias bakes before the village wakes and worries after it sleeps. His bread is the best for three villages, a fact he cannot enjoy because tomorrow's batch might not be. He gives the day-olds to whoever looks like they need them.",
+  "daily_anchors": {
+    "wake": "03:30",
+    "work_start": "04:00",
+    "midday_meal": "12:00",
+    "work_end": "14:00",
+    "evening_habit": "early to bed, listening to the oven cool",
+    "sleep": "20:30"
+  },
+  "initial_memories": [
+    "The mill's last flour sacks were coarser than Josta's usual grind.",
+    "Sela handles the customers better than I ever will."
+  ]
+}

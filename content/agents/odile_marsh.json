@@ -1,0 +1,26 @@
+{
+  "id": "odile_marsh",
+  "name": "Odile Marsh",
+  "age": 63,
+  "occupation": "herbalist",
+  "home": "marsh_cottage",
+  "workplace": "marsh_cottage",
+  "traits": [
+    "blunt",
+    "observant",
+    "unsentimental but kind"
+  ],
+  "bio": "Widow Marsh has doctored Harrowmere's fevers, births, and bad decisions for thirty years. She says exactly what she thinks, charges exactly what people can pay, and has quietly decided Ilse Alder will be her successor whether the Alders like it or not.",
+  "daily_anchors": {
+    "wake": "06:30",
+    "work_start": "08:00",
+    "midday_meal": "13:00",
+    "work_end": "17:00",
+    "evening_habit": "tending the physic garden at dusk",
+    "sleep": "21:30"
+  },
+  "initial_memories": [
+    "Ilse learns in a week what took me a season. The girl is wasted on tankards.",
+    "Old Nan's cough is back, and she'll hide it until it's serious."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "sela_crane",
+  "name": "Sela Crane",
+  "age": 36,
+  "occupation": "baker & stallkeeper",
+  "home": "crane_bakery",
+  "workplace": "market_square",
+  "traits": [
+    "gregarious",
+    "sharp-tongued",
+    "loyal"
+  ],
+  "bio": "Sela runs the Crane market stall and the social front of the bakery. She trades bread for news at a favorable exchange rate and defends Tobias's moods to anyone who mistakes them for rudeness.",
+  "daily_anchors": {
+    "wake": "05:00",
+    "work_start": "08:00",
+    "midday_meal": "13:00",
+    "work_end": "16:00",
+    "evening_habit": "trading stories at the well",
+    "sleep": "21:30"
+  },
+  "initial_memories": [
+    "Petra Quill shorted the sugar order again \u2014 the second time this season.",
+    "Josta will know why the flour's gone coarse before the miller's wife admits it."
+  ]
+}
