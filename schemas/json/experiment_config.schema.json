@@ -32,7 +32,8 @@
         "alpha": {"description": "recency weight", "type": "number", "minimum": 0},
         "beta": {"description": "importance weight", "type": "number", "minimum": 0},
         "gamma": {"description": "relevance weight", "type": "number", "minimum": 0},
-        "recency_decay": {"description": "exponential decay factor on sim-time", "type": "number", "exclusiveMinimum": 0, "maximum": 1}
+        "recency_decay": {"description": "exponential decay factor on sim-time", "type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "top_k": {"description": "memories retrieved per query", "type": "integer", "minimum": 1}
       }
     },
     "perception": {
@@ -47,6 +48,7 @@
     },
     "interrupt_importance_threshold": {"description": "observations scoring >= this dispatch a react call", "type": "integer", "minimum": 1, "maximum": 10},
     "reflection_importance_sum_threshold": {"type": "number", "exclusiveMinimum": 0},
+    "max_conversation_turns": {"description": "dialogue turn cap per conversation", "type": "integer", "minimum": 1},
     "treatments": {
       "type": "array",
       "items": {"$ref": "#/$defs/treatment"}

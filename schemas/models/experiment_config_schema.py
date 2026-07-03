@@ -28,6 +28,7 @@ class Retrieval(BaseModel):
     recency_decay: confloat(le=1.0, gt=0.0) | None = Field(
         None, description="exponential decay factor on sim-time"
     )
+    top_k: conint(ge=1) | None = Field(None, description="memories retrieved per query")
 
 
 class Perception(BaseModel):
@@ -115,6 +116,9 @@ class ExperimentConfig(BaseModel):
         None, description="observations scoring >= this dispatch a react call"
     )
     reflection_importance_sum_threshold: PositiveFloat | None = None
+    max_conversation_turns: conint(ge=1) | None = Field(
+        None, description="dialogue turn cap per conversation"
+    )
     treatments: list[Treatment] | None = None
     replay_of_run_id: UUID | None = Field(
         None,

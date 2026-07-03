@@ -1,6 +1,6 @@
 # POLIS — MASTER PLAN
 
-**Current phase:** P1 complete (gate met: byte-equal fixture) · next: P2 cognition against the mocked gateway · P0 hardware tasks deferred (user call: no live-LLM work from remote sessions) · **Last updated:** 2026-07-03
+**Current phase:** P2 software complete — gate met on the deterministic fake model (real-model day pending hardware) · next: P3 measurement plane · P0 hardware tasks deferred (user call: no live-LLM work from remote sessions) · **Last updated:** 2026-07-03
 
 Plan-of-record. `memory_bank/` is the state-of-record for narrative and decisions. Same operating protocol as glasshouse: read MEMORY_BANK context before any task; after any task update phase boxes, phase log, dashboard, activeContext/progress/decisionLog; run tests; one commit per coherent work item.
 
@@ -38,14 +38,16 @@ boot   world  minds  measure│first  ablate
 
 ## P2 — Cognition (gate: 5 agents live a coherent unscripted day; every completion logged and replayable)
 
-- [ ] Memory stream: write path with importance scoring (fast tier) + embedding at write.
-- [ ] Retrieval: R×I×R scorer over pgvector; α/β/γ in config.
-- [ ] Async cognition runtime: plan-cache execution, importance-gated interrupts, react calls; gateway-down fallback.
-- [ ] Planning: daily plan → lazy hourly → action-step decomposition; plans stored as memory records.
-- [ ] Dialogue: turn loop with per-turn retrieval about interlocutor; conversation summary written back as observations.
-- [ ] Reflection: importance-sum trigger → questions → retrieve → insight records with citation edges.
-- [ ] Logged-completion replay mode; replay of a sampled run reproduces the ledger byte-equal.
-- [ ] Cost telemetry per agent per sim-hour per tier; measure tp split vs. tp=2 on Mnemosyne, record in decisionLog.
+**Gate met 2026-07-03 on the deterministic fake model** (`tests/test_cognition_day.py`): 5 agents live a full unscripted day — plan, commute, use objects, converse, reflect, sleep — every completion logged, replay byte-equal, gateway-down degrades without crashing. The same harness must re-run against live serving when hardware is available (that re-run is the final gate check).
+
+- [x] Memory stream: write path with importance scoring (fast tier) + embedding at write (`cognition/memory.py`; deterministic uuid5 ids). **Embedder is the HashEmbedder stand-in — real 768-dim BERT-class service pending hardware; HashEmbedder runs are non-conforming by construction.**
+- [x] Retrieval: R×I×R scorer, α/β/γ/decay/top_k in config (`cognition/retrieval.py`; min-max normalized per paper; creation-time recency decay — access-time decay noted as possible ablation). pgvector storage parity integration-tested (`tests/test_pg_memory.py`).
+- [x] Cognition runtime: plan-cache execution (cached steps = zero calls), importance-gated interrupts, react calls, gateway-down fallback per subsystem (`cognition/runtime.py`). Scheduling is deterministic (sorted-agent await order) — wall-clock overlap is a serving-time optimization that must never change sim-time semantics.
+- [x] Planning: daily agenda → lazy per-block decomposition → grounded action steps; plans stored as memory records; deterministic anchor-driven fallbacks (`cognition/planning.py`).
+- [x] Dialogue: turn loop with per-turn retrieval about the interlocutor; per-POV summaries written back as memories; hearers (including eavesdroppers, via hearing radius) get observation memories — the diffusion channel (`cognition/runtime.py`).
+- [x] Reflection: importance-sum trigger → questions → retrieve → insight records with citation edges (`cognition/runtime.py`).
+- [x] Logged-completion replay mode; replay reproduces the ledger byte-equal, run_started included (`cognition/completions.py`; failures are logged and replayed too).
+- [x] Cost telemetry per agent per sim-hour per tier (`cognition/telemetry.py`). **Pending hardware: measure tp split vs. tp=2 on Mnemosyne, record in decisionLog.**
 
 ## P3 — Measurement plane (gate: metrics run against a P2 ledger and produce plots without touching sim state)
 

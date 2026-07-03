@@ -45,3 +45,11 @@ Updated: 2026-07-03
 - Inventory now 90 objects across all 16 locations. Every object: generic name, deterministic verb→state interactions, `affordances` tags (schema-enforced enum). Coverage: work 32, food 27, social 25, hygiene 15, sleep 14, leisure 13.
 - Guarantees (validator + tests): every agent's home affords sleep+food; every workplace affords work; possessive/agent-owned object names rejected; all six affordance domains present in town.
 - Fixture regenerated (content_hash). Suite: 85 tests green.
+
+## P2 cognition built, gate met on fake model (2026-07-03)
+
+- Full Park stack in cognition/: memory stream (uuid5 ids, embed-at-write), R×I×R retrieval (min-max normalized, α/β/γ/decay/top_k config, pgvector storage parity test), hierarchical planning (daily agenda → lazy block decomposition → grounded steps; plans are memory records; anchor-driven fallbacks), dialogue (per-turn retrieval, per-POV summaries, hearer/eavesdropper observations = the diffusion channel), reflection (importance-sum trigger → questions → retrieve → insights with citation edges), importance-gated react interrupts, plan-cache cost gate (sleeping/cached = zero calls).
+- Logged-completion replay: CognitionGateway keys every outcome (agent, call_site, sequence), logs failures too; replay reproduces the ledger byte-equal including run_started. Cost telemetry per agent/sim-hour/tier from the log.
+- Deterministic fake model + prompts with machine-readable CONTEXT_JSON blocks drive the real gateway path offline. Gate test: 5 agents, full day — plans, commutes, 164 object uses (20-agent CLI run), 11 conversations, reflections with citations, 0 failures, byte-equal live rerun AND replay; gateway-down run completes on fallbacks.
+- 20-agent full-day CLI run: 734 ledger events, 431 completions (importance 185, decompose 120, dialogue 60, react 28, planning 20, reflection 18) — call profile matches the paper's shape.
+- Suite: 112 tests green. Pending hardware: real embedder, real-model gate re-run, tp-split measurement.

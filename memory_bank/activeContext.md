@@ -4,9 +4,11 @@ Updated: 2026-07-03
 
 ## Current state
 
-P1 world core built and its gate met: byte-equal ledger fixture across headless runs, no LLM (`tests/fixtures/ledger_scripted_seed42_3000.jsonl` is the permanent wall). `pytest` green — 79 tests. Working: deterministic tick loop, A* pathfinding, intent grammar wall with semantic rejection, P11 perception (cone ∧ occlusion ∨ hearing, all config), scripted FSM agents living coherent anchor-driven days, canonical JSONL ledger + zero-authority WebSocket sidecar.
+P2 cognition software complete, gate met on the deterministic fake model: 5 agents (and all 20 via CLI) live a coherent unscripted day on the full Park stack — daily agenda → lazy decomposition → plan-cache execution, importance-scored observations, importance-gated react interrupts, retrieval-grounded dialogue with per-POV summaries and eavesdropper diffusion, reflection with citation edges — every completion logged keyed (agent, call_site, sequence), replay byte-equal including run_started, gateway-down degrading to anchor fallbacks without a crash. `pytest` green — 112 tests.
 
-P0's software half is also done (scaffold, schemas v0 + mirrors, gateway vs mocked endpoint, DDL, serving profile records).
+P1 complete earlier same day (world core, byte-equal fixture wall, 90 affordance-tagged objects, Postgres ledger sink). P0 software half done.
+
+Known stand-ins pending hardware: HashEmbedder (deterministic, non-semantic — runs with it are non-conforming) until the 768-dim BERT-class embedder service exists; fake model until Mnemosyne serving is up.
 
 **Standing constraint (user, 2026-07-03): development happens from remote sessions — do not attempt live LLM connectivity or real database access; everything is built and tested against mocks/fixtures.** Hardware tasks (Postgres apply, Mnemosyne profile launch, gateway smoke, Postgres ledger sink) are batched for Christian to run from the home network later.
 
@@ -26,12 +28,13 @@ P1 is complete (2026-07-03): objects-with-states authored (35 objects, determini
 
 Buildable from remote next:
 
-- P2 cognition against the mocked gateway: memory stream write path, R×I×R retrieval scorer (pgvector-backed in prod, in-memory for tests), plan-cache runtime, logged-completion replay mode — replay is by construction testable without a model.
-- P3 metrics over the committed ledger fixture; P4 observer against exported ledger JSONL.
+- P3 measurement plane: probe runner against frozen state, seeded-fact diffusion pipeline (treatment injection is already just a ledger event + target-agent memory), relationship graph builder, coordination detector — all post-processing cognition-run ledgers/memories, generatable offline with the fake model.
+- P4 observer against exported ledger JSONL.
 
 Batched for Christian (home network):
 
-1. Content rejection pass (names, tone, tension seeds, now also the 35 objects) — still pending.
-2. Postgres with pgvector anywhere: apply `services/db/schema.sql` (768-dim, decided) and run one sim with `--pg-dsn` at it.
-3. Mnemosyne: launch fast/slow vLLM tiers per `services/serving/mnemosyne/*.yaml`; confirm proxy base_url in `profiles.yaml`.
-4. Gateway smoke from the sim host against the live proxy. Closes P0.
+1. Content rejection pass (names, tone, tension seeds, 90 objects + affordances) — still pending.
+2. Postgres with pgvector anywhere: apply `services/db/schema.sql` and run one sim with `--pg-dsn` at it.
+3. Mnemosyne: launch fast/slow vLLM tiers per `services/serving/mnemosyne/*.yaml`; confirm proxy base_url in `profiles.yaml`; gateway smoke from the sim host (closes P0).
+4. Stand up the 768-dim embedder service; swap HashEmbedder out.
+5. Re-run the P2 gate harness (`cognition.runner --profile mnemosyne`) against live serving — the real "coherent day" check — and measure tp split vs tp=2 (cost telemetry is ready).

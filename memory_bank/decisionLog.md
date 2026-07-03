@@ -97,3 +97,15 @@ Reason: User call. 768 fixes the migration-sensitive choice now instead of carry
 Decision: Objects are generic fixtures of a location ("Bed", "Hearth", "Strongbox"), never personalized to an agent (validator rejects possessive names). Every object carries `affordances` ⊆ {sleep, food, hygiene, leisure, social, work} — the grounding layer for a future agent-needs system. Coverage is validator-enforced: every agent's home must afford sleep and food; every workplace must afford work.
 
 Reason: User call. Generic fixtures keep ownership/meaning emergent (an agent's attachment to a bed should come from memories, not labels), daily-life + leisure + utility coverage lets P2 plan decomposition ground morning/evening/leisure steps in real `use_object` targets, and affordance tags give the needs system a contract instead of string-matching object names later.
+
+## 2026-07-03 — Deterministic cognition scheduling; replay ledgers carry no provenance
+
+Decision: The cognition runtime awaits every model call inline, in sorted agent-id order — call order is a pure function of sim state. Wall-clock overlap of slow-tier calls is a serving-time optimization that must never change sim-time semantics, else logged-completion replay breaks. And a replayed run's ledger is byte-equal to the original including run_started: replay provenance lives in the experiment record (experiment_config.replay_of_run_id), never in the ledger.
+
+Reason: Replay is the reproducibility mechanism; it only works if the Nth call per (agent, call_site) is the same call every run. Any "faster because parallel" scheme has to preserve that keying. Ledger-identical replay keeps the permanent-wall property simple: one ledger, one hash, no diff-except-line-0 caveats.
+
+## 2026-07-03 — Dev stand-ins are non-conforming by construction
+
+Decision: The deterministic fake model (cognition/fake_model.py) and HashEmbedder (cognition/embedding.py) exist so the whole stack runs offline under the remote constraint, driving the real gateway/validation/logging path. Any run using either is non-conforming and can never be an experiment; the P2 gate is re-checked against live serving when hardware is available.
+
+Reason: Keeps development unblocked without corrupting the instrument: the machinery (schemas, walls, replay, telemetry) is fully exercised, while semantic behavior (real dialogue, real relevance) is explicitly out of scope for stand-in runs.
