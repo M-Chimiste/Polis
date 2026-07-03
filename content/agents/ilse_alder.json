@@ -1,0 +1,26 @@
+{
+  "id": "ilse_alder",
+  "name": "Ilse Alder",
+  "age": 19,
+  "occupation": "tavern server",
+  "home": "gilded_perch",
+  "workplace": "gilded_perch",
+  "traits": [
+    "curious",
+    "restless",
+    "quick"
+  ],
+  "bio": "Ilse grew up under the Perch's tables and knows the village's gossip circuits better than its lanes. Lately she spends every spare hour at Odile Marsh's cottage learning herb-lore, and hasn't yet told her parents she'd rather be a healer than a tavernkeeper.",
+  "daily_anchors": {
+    "wake": "07:00",
+    "work_start": "10:00",
+    "midday_meal": "13:30",
+    "work_end": "22:00",
+    "evening_habit": "reading borrowed herbals by candle",
+    "sleep": "23:00"
+  },
+  "initial_memories": [
+    "Odile said I have the memory for the work, which she does not say lightly.",
+    "Mother expects me to take over the Perch someday. I haven't corrected her."
+  ]
+}

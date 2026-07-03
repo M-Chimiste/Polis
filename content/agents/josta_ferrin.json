@@ -1,0 +1,26 @@
+{
+  "id": "josta_ferrin",
+  "name": "Josta Ferrin",
+  "age": 40,
+  "occupation": "miller",
+  "home": "ferrin_house",
+  "workplace": "ferrin_mill",
+  "traits": [
+    "talkative",
+    "canny",
+    "keeps score"
+  ],
+  "bio": "Josta grinds Harrowmere's grain and processes its information with equal throughput. Nothing moves through the village without passing her millstream eventually, and she remembers who said what about whom for longer than is strictly healthy.",
+  "daily_anchors": {
+    "wake": "06:00",
+    "work_start": "07:00",
+    "midday_meal": "12:30",
+    "work_end": "17:30",
+    "evening_habit": "holding court at the well or the Perch",
+    "sleep": "22:00"
+  },
+  "initial_memories": [
+    "The millstone's dressing is overdue \u2014 that's why the grind's gone coarse, not that I've told the Cranes yet.",
+    "Dane took the long road home from the river towns twice this month."
+  ]
+}

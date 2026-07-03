@@ -1,0 +1,26 @@
+{
+  "id": "fenwick_roan",
+  "name": "Fenwick Roan",
+  "age": 22,
+  "occupation": "odd-jobber",
+  "home": "ferrin_mill",
+  "workplace": "market_square",
+  "traits": [
+    "cheerful",
+    "unreliable",
+    "surprisingly perceptive"
+  ],
+  "bio": "Fenwick turned up two summers ago, sleeps in the mill loft in exchange for lifting sacks, and works for whoever pays by the day. Everyone agrees he's feckless; everyone hires him anyway. He notices far more than his grin lets on and hasn't decided what to do with any of it.",
+  "daily_anchors": {
+    "wake": "07:30",
+    "work_start": "09:00",
+    "midday_meal": "13:00",
+    "work_end": "17:00",
+    "evening_habit": "wherever the talk is \u2014 usually the Perch",
+    "sleep": "23:00"
+  },
+  "initial_memories": [
+    "Petra pays same-day and Bram pays eventually. Plan the week accordingly.",
+    "Saw the reeve turn around rather than pass the smithy. Third time. Interesting."
+  ]
+}

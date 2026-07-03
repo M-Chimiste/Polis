@@ -1,0 +1,359 @@
+{
+  "id": "harrowmere",
+  "name": "Harrowmere",
+  "grid": {
+    "width": 48,
+    "height": 48
+  },
+  "description": "A small inland village on a millstream. One square, one tavern, one chapel; everyone knows everyone, which is the point.",
+  "locations": [
+    {
+      "id": "market_square",
+      "name": "Market Square",
+      "kind": "public",
+      "rect": [
+        18,
+        18,
+        12,
+        12
+      ],
+      "door": [
+        24,
+        30
+      ],
+      "privacy": 0.0,
+      "tags": [
+        "gathering",
+        "commerce"
+      ],
+      "objects": []
+    },
+    {
+      "id": "village_well",
+      "name": "The Village Well",
+      "kind": "public",
+      "rect": [
+        22,
+        14,
+        4,
+        4
+      ],
+      "door": [
+        24,
+        18
+      ],
+      "privacy": 0.0,
+      "tags": [
+        "gathering",
+        "water"
+      ],
+      "objects": []
+    },
+    {
+      "id": "gilded_perch",
+      "name": "The Gilded Perch",
+      "kind": "tavern",
+      "rect": [
+        12,
+        30,
+        8,
+        6
+      ],
+      "door": [
+        16,
+        30
+      ],
+      "privacy": 0.1,
+      "tags": [
+        "gathering",
+        "food",
+        "drink",
+        "lodging"
+      ],
+      "objects": []
+    },
+    {
+      "id": "crane_bakery",
+      "name": "Crane Bakery",
+      "kind": "shop_home",
+      "rect": [
+        30,
+        30,
+        6,
+        5
+      ],
+      "door": [
+        32,
+        30
+      ],
+      "privacy": 0.3,
+      "tags": [
+        "food",
+        "commerce"
+      ],
+      "objects": []
+    },
+    {
+      "id": "vosse_smithy",
+      "name": "Vosse Smithy",
+      "kind": "shop_home",
+      "rect": [
+        10,
+        20,
+        6,
+        5
+      ],
+      "door": [
+        16,
+        22
+      ],
+      "privacy": 0.3,
+      "tags": [
+        "craft",
+        "commerce"
+      ],
+      "objects": []
+    },
+    {
+      "id": "quill_store",
+      "name": "Quill's General Goods",
+      "kind": "shop_home",
+      "rect": [
+        30,
+        20,
+        6,
+        5
+      ],
+      "door": [
+        30,
+        22
+      ],
+      "privacy": 0.2,
+      "tags": [
+        "commerce"
+      ],
+      "objects": []
+    },
+    {
+      "id": "marsh_cottage",
+      "name": "Marsh Cottage",
+      "kind": "shop_home",
+      "rect": [
+        38,
+        12,
+        5,
+        5
+      ],
+      "door": [
+        38,
+        14
+      ],
+      "privacy": 0.5,
+      "tags": [
+        "herbalism",
+        "healing"
+      ],
+      "objects": []
+    },
+    {
+      "id": "chapel",
+      "name": "Chapel of the Lamp",
+      "kind": "chapel",
+      "rect": [
+        20,
+        4,
+        8,
+        7
+      ],
+      "door": [
+        24,
+        11
+      ],
+      "privacy": 0.2,
+      "tags": [
+        "gathering",
+        "teaching"
+      ],
+      "objects": []
+    },
+    {
+      "id": "ferrin_mill",
+      "name": "Ferrin Mill",
+      "kind": "mill",
+      "rect": [
+        4,
+        38,
+        7,
+        6
+      ],
+      "door": [
+        11,
+        40
+      ],
+      "privacy": 0.3,
+      "tags": [
+        "craft",
+        "commerce",
+        "millstream"
+      ],
+      "objects": []
+    },
+    {
+      "id": "hale_farm",
+      "name": "Hale Farmstead",
+      "kind": "farm",
+      "rect": [
+        36,
+        38,
+        10,
+        8
+      ],
+      "door": [
+        36,
+        42
+      ],
+      "privacy": 0.4,
+      "tags": [
+        "food",
+        "fields"
+      ],
+      "objects": []
+    },
+    {
+      "id": "weaver_cottage",
+      "name": "Weaver Cottage",
+      "kind": "home",
+      "rect": [
+        6,
+        8,
+        5,
+        5
+      ],
+      "door": [
+        11,
+        10
+      ],
+      "privacy": 0.6,
+      "tags": [],
+      "objects": []
+    },
+    {
+      "id": "tarn_cabin",
+      "name": "Tarn Cabin",
+      "kind": "home",
+      "rect": [
+        42,
+        4,
+        4,
+        4
+      ],
+      "door": [
+        42,
+        8
+      ],
+      "privacy": 0.8,
+      "tags": [
+        "edge_of_town"
+      ],
+      "objects": []
+    },
+    {
+      "id": "fenn_cottage",
+      "name": "Fenn Cottage",
+      "kind": "home",
+      "rect": [
+        14,
+        12,
+        5,
+        4
+      ],
+      "door": [
+        16,
+        16
+      ],
+      "privacy": 0.6,
+      "tags": [],
+      "objects": []
+    },
+    {
+      "id": "dunn_house",
+      "name": "Dunn House",
+      "kind": "home",
+      "rect": [
+        22,
+        38,
+        6,
+        5
+      ],
+      "door": [
+        22,
+        40
+      ],
+      "privacy": 0.5,
+      "tags": [
+        "reeve"
+      ],
+      "objects": []
+    },
+    {
+      "id": "ferrin_house",
+      "name": "Ferrin House",
+      "kind": "home",
+      "rect": [
+        4,
+        32,
+        5,
+        4
+      ],
+      "door": [
+        9,
+        34
+      ],
+      "privacy": 0.6,
+      "tags": [],
+      "objects": []
+    },
+    {
+      "id": "orchard",
+      "name": "The Old Orchard",
+      "kind": "public",
+      "rect": [
+        38,
+        24,
+        8,
+        8
+      ],
+      "door": [
+        38,
+        28
+      ],
+      "privacy": 0.2,
+      "tags": [
+        "food",
+        "quiet"
+      ],
+      "objects": []
+    }
+  ],
+  "occluders": [
+    {
+      "id": "market_stalls",
+      "at": [
+        23,
+        22
+      ],
+      "radius": 1.5,
+      "note": "stall row blocks sight across the square"
+    },
+    {
+      "id": "chapel_yew",
+      "at": [
+        19,
+        12
+      ],
+      "radius": 1.2,
+      "note": "old yew by the chapel door"
+    }
+  ],
+  "notes": "STATIC CONTENT. Generated once by scripts/generate_content.py and frozen; edit by hand from here on. Location ids are referenced by agent seeds and must not be renamed without running scripts/validate_content.py."
+}

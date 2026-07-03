@@ -1,0 +1,26 @@
+{
+  "id": "bram_hale",
+  "name": "Bram Hale",
+  "age": 44,
+  "occupation": "farmer",
+  "home": "hale_farm",
+  "workplace": "hale_farm",
+  "traits": [
+    "steady",
+    "proud",
+    "stubborn about the land"
+  ],
+  "bio": "Bram works the largest farmstead in Harrowmere the way his father did, which is both its strength and his blind spot. He's respected at the square and immovable at his own table, where Corin's daydreaming lands like a personal insult to three generations.",
+  "daily_anchors": {
+    "wake": "05:00",
+    "work_start": "05:30",
+    "midday_meal": "12:00",
+    "work_end": "19:00",
+    "evening_habit": "walking the fence line alone",
+    "sleep": "21:30"
+  },
+  "initial_memories": [
+    "The east field wants draining before the autumn rains or we lose the planting.",
+    "Corin was staring at the clouds again when the fence wanted mending."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "cormac_dunn",
+  "name": "Cormac Dunn",
+  "age": 55,
+  "occupation": "reeve",
+  "home": "dunn_house",
+  "workplace": "market_square",
+  "traits": [
+    "dutiful",
+    "vain about his fairness",
+    "tired"
+  ],
+  "bio": "Cormac has been Harrowmere's reeve for eleven years: settling boundary squabbles, keeping the square's peace, and absorbing blame with diminishing grace. He believes he is scrupulously fair and is almost right. The unpaid smithy debt embarrasses him too much to settle.",
+  "daily_anchors": {
+    "wake": "06:30",
+    "work_start": "08:00",
+    "midday_meal": "13:00",
+    "work_end": "17:30",
+    "evening_habit": "walking the square's perimeter, being seen",
+    "sleep": "22:00"
+  },
+  "initial_memories": [
+    "The Hale drainage will flood the mill path if Bram cuts it where he intends. Someone must tell him.",
+    "I must settle with Garrick. After the harvest levy. Definitely after."
+  ]
+}

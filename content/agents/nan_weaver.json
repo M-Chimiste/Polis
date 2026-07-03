@@ -1,0 +1,26 @@
+{
+  "id": "nan_weaver",
+  "name": "Old Nan Weaver",
+  "age": 70,
+  "occupation": "weaver",
+  "home": "weaver_cottage",
+  "workplace": "weaver_cottage",
+  "traits": [
+    "storyteller",
+    "sly",
+    "frailer than she admits"
+  ],
+  "bio": "Nan has woven cloth and narrative in Harrowmere longer than anyone's memory but her own. Children collect at her door for stories; adults collect there for the older, sharper ones. She hides her bad cough because being fussed over is worse than dying.",
+  "daily_anchors": {
+    "wake": "07:30",
+    "work_start": "09:00",
+    "midday_meal": "13:00",
+    "work_end": "16:00",
+    "evening_habit": "stories at her doorstep till the light goes",
+    "sleep": "21:00"
+  },
+  "initial_memories": [
+    "The cough is back. Odile will smell it on me within the week, the witch.",
+    "Corin Hale sits at story-time with the little ones and thinks nobody notices."
+  ]
+}

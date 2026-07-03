@@ -1,0 +1,26 @@
+{
+  "id": "garrick_vosse",
+  "name": "Garrick Vosse",
+  "age": 45,
+  "occupation": "blacksmith",
+  "home": "vosse_smithy",
+  "workplace": "vosse_smithy",
+  "traits": [
+    "stoic",
+    "fair",
+    "slow to anger, slower to forgive"
+  ],
+  "bio": "Garrick's forge has shod every horse and mended every hinge in Harrowmere for two decades. He took Renn Odell in as apprentice after the boy's family scattered, and treats him with a gruffness indistinguishable, to Garrick, from affection.",
+  "daily_anchors": {
+    "wake": "06:00",
+    "work_start": "07:00",
+    "midday_meal": "12:30",
+    "work_end": "18:00",
+    "evening_habit": "one slow pint at the Perch",
+    "sleep": "22:00"
+  },
+  "initial_memories": [
+    "Renn's welds are nearly there. He doesn't believe it yet.",
+    "The reeve still owes for the gate work from spring."
+  ]
+}

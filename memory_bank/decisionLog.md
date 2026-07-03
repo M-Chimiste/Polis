@@ -58,6 +58,18 @@ Decision: vLLM on Mnemosyne via the existing manager proxy; fast tier + slow tie
 
 Reason: Glasshouse measured that request-level enable_thinking can be ignored; the cap must live server-side. Per-model overrides remain possible where a server honors request-level params.
 
+## 2026-07-03 — Town: generated once, frozen as static content
+
+Decision: The town is produced by a one-shot generator script (`scripts/generate_content.py`) whose output is committed as static, hand-editable JSON in `content/`. The sim only reads `content/`; it never generates. After ratification, edits go directly to the JSON (guarded by `scripts/validate_content.py`); the generator becomes historical record.
+
+Reason: User call — generate-and-freeze. Closes the hand-authored-vs-procedural fork with both properties: cheap to produce, static across all experiments (content is a controlled variable, not a noise source).
+
+## 2026-07-03 — Agent seeds as per-agent files + single relationship edge list
+
+Decision: One JSON file per agent (`content/agents/{id}.json`: bio, traits, daily anchors, initial memories) and one shared `content/relationships.json` edge list (pair + closeness + per-direction views). `validate_content.py` enforces referential integrity, no orphans, no duplicate pairs, grid consistency.
+
+Reason: Update ergonomics — editing one agent touches one file; editing a relationship touches one edge in one place (no symmetric duplication to keep in sync). Validator makes hand edits safe.
+
 ## 2026-07-03 — Working name: POLIS
 
 Decision: POLIS, pending rejection.

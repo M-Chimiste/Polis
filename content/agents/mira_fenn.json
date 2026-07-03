@@ -1,0 +1,26 @@
+{
+  "id": "mira_fenn",
+  "name": "Mira Fenn",
+  "age": 29,
+  "occupation": "seamstress",
+  "home": "fenn_cottage",
+  "workplace": "fenn_cottage",
+  "traits": [
+    "kind",
+    "wistful",
+    "harder underneath than she looks"
+  ],
+  "bio": "Mira sews for the village and came back to her late mother's cottage after a marriage in the river towns ended in a way she doesn't discuss. Harrowmere half-remembers her as a girl and hasn't decided who she is now; neither, entirely, has she.",
+  "daily_anchors": {
+    "wake": "07:00",
+    "work_start": "08:30",
+    "midday_meal": "13:00",
+    "work_end": "18:00",
+    "evening_habit": "the well at dusk, then the Perch some nights",
+    "sleep": "22:00"
+  },
+  "initial_memories": [
+    "The reeve's mending is done three days early. No reason to deliver it early. No reason not to.",
+    "Sela is the only one who asks nothing about the river towns."
+  ]
+}

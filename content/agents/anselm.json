@@ -1,0 +1,26 @@
+{
+  "id": "anselm",
+  "name": "Brother Anselm",
+  "age": 58,
+  "occupation": "cleric & teacher",
+  "home": "chapel",
+  "workplace": "chapel",
+  "traits": [
+    "gentle",
+    "bookish",
+    "conflict-averse to a fault"
+  ],
+  "bio": "Brother Anselm keeps the Chapel of the Lamp, teaches letters to whichever children can be spared from chores, and believes most village disputes would dissolve if people simply talked \u2014 a theory the village keeps disproving. He lends books he never gets back.",
+  "daily_anchors": {
+    "wake": "05:30",
+    "work_start": "08:00",
+    "midday_meal": "12:30",
+    "work_end": "17:00",
+    "evening_habit": "reading by the chapel lamp",
+    "sleep": "21:00"
+  },
+  "initial_memories": [
+    "Ilse returned the herbal, the only borrower who ever returns anything.",
+    "The reeve and Garrick nodded past each other at the square again. That gate debt is festering."
+  ]
+}

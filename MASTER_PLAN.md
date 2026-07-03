@@ -29,7 +29,7 @@ boot   world  minds  measure│first  ablate
 
 ## P1 — World core (gate: byte-equal ledger fixture across two headless runs, no LLM)
 
-- [ ] Town spec (hand-authored JSON): grid map, ~10 locations (homes, tavern, market, well, workshop…), objects with states.
+- [x] Town spec: **DONE at inception** — generated once via `scripts/generate_content.py`, frozen as static `content/town.json` (Harrowmere, 16 locations, 48×48). Objects-with-states still to populate.
 - [ ] Tick loop: pure world step, seeded PRNG streams per subsystem, A*/grid pathfinding, co-location cells.
 - [ ] Intent grammar + validator: move_to, use_object, converse_with(request/accept/decline), idle, sleep.
 - [ ] Perception, from scratch to P11 semantics: sight cone ∧ occlusion ∨ hearing radius; all parameters in config.
@@ -65,7 +65,7 @@ boot   world  minds  measure│first  ablate
 
 ## P5 — First experiment (gate: a diffusion curve from ≥8 seeds, 20 agents, ≥3 sim-days, unattended)
 
-- [ ] Author 20 agent seeds (Park-style paragraph bios + relationships).
+- [x] 20 agent seeds: **DONE at inception** — `content/agents/*.json` + `content/relationships.json` (32 edges), validator-guarded. Rejection pass pending.
 - [ ] Soak: full sim-week headless run; fix what breaks.
 - [ ] Run the seeded-fact diffusion experiment across ≥8 seeds; produce curves + believability scores + cost report.
 - [ ] Writeup pass: does the instrument work? Record verdict + gaps in progress.md.
@@ -80,4 +80,4 @@ boot   world  minds  measure│first  ablate
 
 ## Deferred register (not before P6)
 
-Procedural town generation · perception-parameter ablations · population scaling >25 · Twitch replay broadcasting (observer-only) · multi-day persistent society (season-style continuity) · cross-model/cross-backend comparisons (e.g. MLX serving profiles) · belief-divergence formal analysis over reflection citation edges.
+Town re-generation / variants · perception-parameter ablations · population scaling >25 · Twitch replay broadcasting (observer-only) · multi-day persistent society (season-style continuity) · cross-model/cross-backend comparisons (e.g. MLX serving profiles) · belief-divergence formal analysis over reflection citation edges.
