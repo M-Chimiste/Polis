@@ -22,7 +22,7 @@ boot   world  minds  measure│first  ablate
 ## P0 — Bootstrap (gate: `pytest` green on a walking skeleton)
 
 - [ ] Repo scaffold: uv project, `sim/`, `cognition/`, `metrics/`, `observer/`, `schemas/`, `services/`.
-- [ ] Salvage import: `services/agent_model_service` from glasshouse (verbatim, own commit); smoke against Mnemosyne vLLM proxy profile.
+- [ ] Model gateway, from scratch: validation wall + structured outputs + one repair re-prompt + named hardware profiles + **per-model/per-role sampling config** (glasshouse pattern reimplemented, zero code import); smoke against Mnemosyne vLLM proxy profile from the sim host (Mac).
 - [ ] Schemas v0: `ledger_event`, `agent_intent`, `memory_record`, `experiment_config`, `probe_result`. Pydantic mirrors generated.
 - [ ] Postgres schema on Nyx (pgvector enabled): runs, agents, memory_records, ledger_events, completions, probes, metrics.
 - [ ] vLLM serving profiles on Mnemosyne: fast tier (8B, GPU0) + slow tier (32–70B, GPU1), reasoning capped at launch; record profile configs in-repo.
@@ -32,7 +32,7 @@ boot   world  minds  measure│first  ablate
 - [ ] Town spec (hand-authored JSON): grid map, ~10 locations (homes, tavern, market, well, workshop…), objects with states.
 - [ ] Tick loop: pure world step, seeded PRNG streams per subsystem, A*/grid pathfinding, co-location cells.
 - [ ] Intent grammar + validator: move_to, use_object, converse_with(request/accept/decline), idle, sleep.
-- [ ] Perception port (glasshouse P11): sight cone ∧ occlusion ∨ hearing radius; all parameters in config.
+- [ ] Perception, from scratch to P11 semantics: sight cone ∧ occlusion ∨ hearing radius; all parameters in config.
 - [ ] Scripted-agent mode (FSM stand-ins) to exercise the loop without models.
 - [ ] Ledger stream: Postgres persistence + WebSocket sidecar; legacy-replay fixture established (the permanent wall).
 
@@ -80,4 +80,4 @@ boot   world  minds  measure│first  ablate
 
 ## Deferred register (not before P6)
 
-Procedural town generation · perception-parameter ablations · population scaling >25 · Twitch replay broadcasting (observer-only) · multi-day persistent society (season-style continuity) · cross-model comparisons (MLX profiles on Athena/Metis) · belief-divergence formal analysis over reflection citation edges.
+Procedural town generation · perception-parameter ablations · population scaling >25 · Twitch replay broadcasting (observer-only) · multi-day persistent society (season-style continuity) · cross-model/cross-backend comparisons (e.g. MLX serving profiles) · belief-divergence formal analysis over reflection citation edges.
