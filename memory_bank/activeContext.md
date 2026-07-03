@@ -24,7 +24,7 @@ Live-day findings (pre-soak fix list):
 - **27 intent rejections, two grounding gaps**: (a) real-model decompositions don't reliably lead `use_object` with a `move_to` (Sela used bakery objects from elsewhere, 19×); (b) agendas name hallucinated locations (`market_district`, `marketplace`, `supply_shop`). Fix at the schema layer: build response schemas dynamically at call time — location enum from the town spec in AGENDA_SCHEMA, object-id enum from the block's location in STEPS_SCHEMA. Grammar-constrained decoding then makes invalid grounding unrepresentable.
 - **Real-model importance runs hot** vs the fake tiers → reflection trigger fired 168× in a day. Thresholds are experiment config by design; calibrate during soak and freeze into the config hash.
 - **Era anachronism** in dialogue ("no phones") — prompt/bio era grounding; folds into Christian's content rejection pass.
-- **conversation_started (26) vs conversation_ended (18)**: check whether sleep wind-down emits an end event; ledger completeness question, not gate-blocking.
+- **Crossing-request conversation bug** (diagnosed from the started/ended imbalance): when requests cross in one tick (ilse→piet, maren→piet, piet→ilse at tick 7200), the world starts two conversations sharing one agent; the loser (piet↔maren) never gets a turn and is dropped with **no conversation_ended event** — a half-attached conversation dies without a ledger trace. Sleep wind-down itself emits correctly (runtime.py:385). Fix in the request/accept/attach path + deterministic regression test (two agents requesting the same partner in one tick).
 
 ## Open forks
 
