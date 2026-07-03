@@ -81,7 +81,10 @@ class Mind:
     plan: PlanCache = field(default_factory=PlanCache)
     last_seen: frozenset = frozenset()
     conversation: Conversation | None = None
-    incoming_request: str | None = None
+    # FIFO, deduped: crossing requests must not overwrite each other — every
+    # requester eventually gets an accept or an explicit decline (one
+    # converse_with intent per tick), never silence (live-gate bug 2026-07-03)
+    incoming_requests: list[str] = field(default_factory=list)
     reflection_marker: int = 0
     gateway_failures: int = 0
 
@@ -320,7 +323,9 @@ class CognitionRuntime:
 
         for kind, agent_id, data in prev_events:
             if kind == "conversation_requested":
-                self.minds[data["partner"]].incoming_request = agent_id
+                queue = self.minds[data["partner"]].incoming_requests
+                if agent_id not in queue:
+                    queue.append(agent_id)
             elif kind == "conversation_started":
                 initiator = data["partner"]
                 conv = Conversation(initiator=initiator, partner=agent_id, speaker=initiator)
@@ -331,6 +336,14 @@ class CognitionRuntime:
                 if both_free and both_awake:
                     self.minds[initiator].conversation = conv
                     self.minds[agent_id].conversation = conv
+                else:
+                    # refused attach (party busy/asleep — e.g. crossing
+                    # requests brokered into two starts sharing an agent):
+                    # close it on the ledger instead of dropping it silently.
+                    # Invariant: every conversation_started gets exactly one
+                    # conversation_ended.
+                    cognition_events.append(("conversation_ended", initiator,
+                                             {"partner": agent_id, "turns": 0}))
 
         handled_conversations: set[int] = set()
         for aid in sorted(self.minds):
@@ -365,10 +378,10 @@ class CognitionRuntime:
                     salient.append(record)
             mind.last_seen = seen
 
-            # -- incoming conversation request: accept unless busy
-            if mind.incoming_request is not None:
-                requester = mind.incoming_request
-                mind.incoming_request = None
+            # -- incoming conversation requests: answer one per tick (accept
+            # if free, else explicit decline — requesters are never ghosted)
+            if mind.incoming_requests:
+                requester = mind.incoming_requests.pop(0)
                 mode = "accept" if mind.conversation is None else "decline"
                 intents[aid] = {"agent_id": aid, "tick": world.tick,
                                 "kind": "converse_with", "partner_id": requester, "mode": mode}
