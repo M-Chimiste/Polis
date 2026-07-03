@@ -2,9 +2,25 @@
 
 ## 2026-07-03 — POLIS is a sibling repo, not a glasshouse mode
 
-Decision: New repo. Glasshouse parts are imported/ported explicitly (agent_model_service, memory_service persistence, P11 perception, contract discipline); nothing else crosses over.
+Decision: New repo. Glasshouse's director/scenario/broadcast stack contaminates emergence claims; a "research mode" flag would leave injection pathways in the codebase and in doubt. The dividing rule must be structural.
 
-Reason: Glasshouse's director/scenario/broadcast stack contaminates emergence claims. A "research mode" flag would leave injection pathways in the codebase and in doubt. The dividing rule must be structural.
+## 2026-07-03 — From scratch: zero glasshouse code import
+
+Decision: No glasshouse code is imported or ported. Proven patterns (gateway validation wall, P11 perception semantics, contract discipline, byte-equal replay fixtures) are reimplemented clean from their specs.
+
+Reason: User call — building from scratch ensures nothing show-shaped survives by accident. Supersedes the inception-draft salvage manifest.
+
+## 2026-07-03 — Sampling parameters configurable per model, per role
+
+Decision: Temperature/top_p/top_k/min_p/max_tokens/reasoning budget are set per model per role in config; no global policy and never a temperature-0 requirement. Sampling params are part of the experiment config hash.
+
+Reason: Different models need different sampling to behave; determinism comes from logged-completion replay, not from constraining sampling. Config-hash inclusion keeps conditions honest.
+
+## 2026-07-03 — Mnemosyne serves, Macs simulate
+
+Decision: Mnemosyne is the inference server, exclusively. The sim process (plus probes and metrics) runs on a Mac (Athena/Metis primary) and must be host-portable to any Tailscale node; hard dependencies limited to gateway HTTP + Postgres.
+
+Reason: User call. Keeps the GPUs dedicated to the throughput workload and the sim independently movable/restartable.
 
 ## 2026-07-03 — No narrative injection, ever
 
@@ -14,7 +30,7 @@ Reason: Any injected pressure destroys the ability to attribute observed behavio
 
 ## 2026-07-03 — Python sim core (not Rust/Bevy, not FastAPI-as-sim)
 
-Decision: Single authoritative Python process for the sim; thin FastAPI sidecar for ledger streaming/control only.
+Decision: Single authoritative Python process for the sim; thin FastAPI sidecar for ledger streaming/control only. Runs on a Mac (see "Mnemosyne serves, Macs simulate").
 
 Reason: Tick work is trivial at ≤25 agents; the bottleneck is LLM latency. One language for sim + cognition + metrics + TheseusInsight tooling. Rust/wgpu ambitions stay with Vivarium.
 
@@ -40,7 +56,7 @@ Reason: Post-hoc metric selection on emergent systems is how you fool yourself. 
 
 Decision: vLLM on Mnemosyne via the existing manager proxy; fast tier + slow tier split across the two Blackwells (tp=2 single-model as a measured alternative). Reasoning budgets set at server launch.
 
-Reason: Glasshouse measured that request-level enable_thinking can be ignored; the cap must live server-side. Two Blackwells idle while an 8B on metis carries cognition is the wrong allocation for a throughput workload.
+Reason: Glasshouse measured that request-level enable_thinking can be ignored; the cap must live server-side. Per-model overrides remain possible where a server honors request-level params.
 
 ## 2026-07-03 — Working name: POLIS
 
