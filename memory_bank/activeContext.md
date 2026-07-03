@@ -22,7 +22,7 @@ Still pending from before: content rejection pass (Christian — names, tone, te
 
 P0 hardware tasks (need Tailscale access to the boxes; can't run from a cloud session):
 
-1. Nyx: create the `polis` database, enable pgvector, apply `services/db/schema.sql`. Confirm the embedder choice first — the DDL carries a `vector(384)` placeholder (MiniLM-class) and changing it later is a migration.
+1. Any Postgres with pgvector (Nyx is the default home, not a dependency — decision 2026-07-03): create the `polis` database, apply `services/db/schema.sql` (embedding dim 768, BERT-class, decided).
 2. Mnemosyne: launch fast/slow tiers per `services/serving/mnemosyne/*.yaml` through the vLLM manager, reconcile those records with the manager's real config format, confirm the proxy base_url in `services/serving/profiles.yaml`.
 3. Sim host (Mac): run a gateway smoke test against the live proxy (structured output + repair path against a real model). That closes P0.
 

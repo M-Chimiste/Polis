@@ -86,3 +86,8 @@ Reason: One artifact to review per contract change; drift between schema and mir
 Decision: `ModelGateway.complete()` returns `GatewayCompletion | GatewayFailure` for every outcome — validation failure after the one repair re-prompt AND transport/HTTP failures. Callers branch, they don't catch.
 
 Reason: Service-optionality pattern made structural: gateway-down must degrade to plan-cache execution, so the sim's cognition dispatch should never need a try/except to survive it.
+## 2026-07-03 — Embeddings: 768-dim BERT-class; Postgres host-agnostic
+
+Decision: memory_records.embedding is vector(768) — a modern BERT-class embedder. And the DDL/tooling assume "any Postgres with pgvector", not Nyx specifically; Nyx remains the default home but is not a dependency of the schema or the code.
+
+Reason: User call. 768 fixes the migration-sensitive choice now instead of carrying a placeholder into P2; decoupling from Nyx keeps the sim host-portable (the only hard dependencies stay HTTP reach to the gateway and a Postgres URL).

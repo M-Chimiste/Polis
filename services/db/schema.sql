@@ -1,11 +1,10 @@
--- POLIS Postgres schema v0 (Nyx, pgvector enabled).
--- Apply: psql -h nyx -U polis -d polis -f services/db/schema.sql
+-- POLIS Postgres schema v0. Any Postgres with pgvector works; host is not
+-- part of the contract (decision 2026-07-03).
+-- Apply: psql -h <host> -U polis -d polis -f services/db/schema.sql
 -- Idempotent; safe to re-run.
 --
--- Embedding dimension 384 assumes a sentence-transformers MiniLM-class
--- embedder (techContext: "small embedder ... sentence-transformers class").
--- Revisit before P2 if a different embedder is chosen — changing it is a
--- migration, not an edit.
+-- Embedding dimension 768 = modern BERT-class embedder (decision
+-- 2026-07-03). Changing it later is a migration, not an edit.
 
 CREATE EXTENSION IF NOT EXISTS vector;
 
@@ -49,7 +48,7 @@ CREATE TABLE IF NOT EXISTS memory_records (
     text       text  NOT NULL,
     importance smallint NOT NULL CHECK (importance BETWEEN 1 AND 10),
     citations  uuid[] NOT NULL DEFAULT '{}', -- citation edges (belief-divergence data)
-    embedding  vector(384),
+    embedding  vector(768),
     created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS memory_records_run_agent ON memory_records (run_id, agent_id, tick);
