@@ -62,3 +62,15 @@ Updated: 2026-07-03
 - Getting there surfaced real cognition fixes (salient-news dialogue channel, hourly re-observation, per-hour recency, tiered fake importance, zombie-conversation bug) — see decisionLog.
 - cognition runner: --config (validated experiment config, treatments read from it), memories.jsonl export; probe role added to profiles.
 - Suite: 130 tests green (4 live-Postgres). matplotlib added.
+
+## P0 hardware half closed — live serving bring-up on Theseus (2026-07-03)
+
+- Moved to Theseus (real computer); remote-only constraint lifted. `.env` (untracked) carries LLM endpoints; local Postgres available.
+- DB: created `polis` + `polis_test` on local Postgres 14 + pgvector 0.8.0, applied `schema.sql`; pg integration tests run live — first no-skip suite run.
+- Serving reality (probed): metis + athena, LM Studio-class OpenAI-compatible on :1240, NOT Mnemosyne/vLLM. User call: qwen3.6-35b-a3b-mtp (thinking, MTP) for both tiers; nomic-embed-text-v1.5 (768-dim — matches vector(768) exactly) for embeddings.
+- Measured thinking-model behavior (decisionLog): request-level kill switches all ignored; reasoning separated into `reasoning_content`; metis shunts grammar-constrained JSON into `reasoning_content` (empty content, ~35 tok/call — de facto no-think); athena reasons fully (~300–1000 tok) then emits valid JSON; tiny max_tokens truncate mid-reasoning to empty content.
+- Gateway hardened: profile `request_extras` (carries best-effort `enable_thinking: false`), schema-gated reasoning_content salvage, empty freeform content → typed validation failure; budgets ≥1024 across roles. Profiles rewritten: `metis` + `athena`.
+- Structured outputs everywhere (user directive): UTTERANCE_SCHEMA on dialogue turns, PROBE_ANSWER_SCHEMA on probe interviews — zero freeform calls left; fake model updated to match.
+- HTTPEmbedder (`cognition/embedding.py`): OpenAI-compatible /v1/embeddings, asymmetric nomic prefixes (`embed_query` added to the protocol; HashEmbedder aliases it prefix-free — fixtures hold), hard dim check, raises loudly. Runner wires it from the profile `embedding:` block.
+- **First live cognition run** (2 Alder agents, ticks to ~07:13, `--profile metis`): 29 completions, 0 gateway failures, real daily plans, 12 object uses, real 4-turn conversation at the Gilded Perch, salvage path exercised in production (2130/2159 completion tokens via reasoning_content).
+- Suite: 140 tests green (10 new: extras/salvage/empty-content, shipped-profile invariants, HTTPEmbedder). Remaining P2 check: full 5-agent live day.

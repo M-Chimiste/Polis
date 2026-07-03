@@ -40,7 +40,7 @@ def retrieve(stream: MemoryStream, embedder: Embedder, query: str,
              now_tick: int, params: RetrievalParams) -> list[dict]:
     if not stream.records:
         return []
-    query_emb = embedder.embed([query])[0]
+    query_emb = embedder.embed_query([query])[0]
     recency, importance, relevance = [], [], []
     for r in stream.records:
         age_hours = max(0, now_tick - r["tick"]) * TICK_SIM_SECONDS / 3600

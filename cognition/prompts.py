@@ -187,6 +187,15 @@ def reaction_prompt(agent: dict, observation: str, candidates: list[str]) -> lis
     )
 
 
+UTTERANCE_SCHEMA = {
+    "title": "utterance",
+    "type": "object",
+    "required": ["utterance"],
+    "additionalProperties": False,
+    "properties": {"utterance": {"type": "string", "minLength": 1}},
+}
+
+
 def dialogue_turn_prompt(agent: dict, partner_id: str, turn: int,
                          retrieved: list[dict], history: list[str]) -> list[dict]:
     """retrieved: [{text, importance}] — salience travels with the memory so
@@ -196,7 +205,8 @@ def dialogue_turn_prompt(agent: dict, partner_id: str, turn: int,
         "Produce this person's next utterance in the conversation, grounded "
         "in what they remember about their interlocutor. Prefer bringing up "
         "memories with high importance. If the conversation has run its "
-        "course, end the utterance with [DONE].",
+        "course, end the utterance with [DONE]. "
+        'Respond with JSON: {"utterance": "..."}.',
         {"role": "dialogue", "agent": agent["id"], "partner": partner_id,
          "turn": turn, "memories": retrieved, "history": history},
     )

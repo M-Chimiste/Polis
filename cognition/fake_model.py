@@ -106,14 +106,14 @@ def _respond(ctx: dict) -> str:
             line = f"{ctx['agent']} to {ctx['partner']}: thinking on '{memory[:60]}'"
             if ctx["turn"] >= 3:
                 line += " [DONE]"
-            return line
+            return json.dumps({"utterance": line})
         return json.dumps({"summary": (
             f"{ctx['agent']} spoke with {ctx['partner']}: "
             + (ctx["history"][0][:80] if ctx["history"] else "small talk")
         )})
     if role == "probe":
         memory = ctx["memories"][0] if ctx["memories"] else "nothing in particular"
-        return f"Well, since you ask — {memory[:100]}"
+        return json.dumps({"answer": f"Well, since you ask — {memory[:100]}"})
     if role == "reflection":
         if "question" in ctx:
             n = len(ctx["memories"])

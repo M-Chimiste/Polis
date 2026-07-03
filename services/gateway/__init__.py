@@ -6,6 +6,7 @@ never an exception, so gateway-down degrades to plan-cache execution instead
 of crashing the sim (service-optionality pattern).
 """
 from services.gateway.config import (
+    EmbeddingConfig,
     RoleConfig,
     SamplingConfig,
     ServingProfile,
@@ -20,6 +21,7 @@ from services.gateway.client import (
 )
 
 __all__ = [
+    "EmbeddingConfig",
     "GatewayCompletion",
     "GatewayFailure",
     "GatewayResult",

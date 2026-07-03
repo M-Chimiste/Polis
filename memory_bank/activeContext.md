@@ -1,43 +1,32 @@
 # Active Context
 
-Updated: 2026-07-03
+Updated: 2026-07-03 (evening — live hardware session)
 
 ## Current state
 
-P3 measurement plane complete, gate met: all metrics + the probe battery post-process run artifacts with provably zero sim footprint (contamination test), and **the first measured diffusion curve exists** — a fact seeded at the tavernkeeper reaches her co-located household (1→3 of 5) through dialogue + eavesdropping while the never-co-present bakery pair stays dark. Fake-model, so non-conforming — but the entire instrument path (inject → memory → retrieval → utterance → hearing → probe → curve → plot → bundle) demonstrably works.
+**P0 is fully closed.** Development moved to Theseus (real computer): live LLM serving and a local Postgres are available. The remote-only standing constraint is lifted.
 
-Built today, in order: P0 software half → P1 world core (byte-equal wall, 90 affordance-tagged objects, Postgres ledger sink) → P2 cognition (Park stack, logged-completion replay, cost telemetry) → P3 (probes, diffusion, graph, coordination, believability battery, bundle assembly). `pytest` green — 130 tests (incl. live local-Postgres integration).
+- **Serving:** metis + athena (LM Studio-class OpenAI-compatible, :1240 over Tailscale; endpoints in untracked `.env`), both serving qwen3.6-35b-a3b-mtp (thinking model) for both tiers + nomic-embed-text-v1.5 (768-dim). Profiles `metis`/`athena` in `services/serving/profiles.yaml`; mnemosyne yaml is historical.
+- **Database:** local Postgres 14 + pgvector 0.8.0; `polis` (runs) + `polis_test` (suite) created, DDL applied; pg integration tests run live (no skips).
+- **Gateway smoked live** and hardened for thinking models: request_extras (`enable_thinking: false`, best-effort — measured ignored), reasoning_content salvage on structured calls (metis grammar shunt: ~35 tok/call, effectively no-think), empty-content = typed failure, role budgets ≥1024. See decisionLog "Thinking-model serving facts".
+- **Structured outputs on every call** (user directive): dialogue turns (`{"utterance"}`) and probe interviews (`{"answer"}`) got schemas — no freeform calls remain.
+- **HTTPEmbedder** wired via profile `embedding:` block (asymmetric nomic prefixes; `embed_query` on the protocol; HashEmbedder aliases it prefix-free so fixtures hold).
+- **First live cognition smoke** (2 Alder agents, morning, `--profile metis`): 29 completions, 0 gateway failures, real daily plans, 12 object uses, and a real 4-turn conversation at the Gilded Perch. HashEmbedder/fake-model/DeterministicJudge remain the offline stand-ins; runs using them stay non-conforming.
 
-Cognition dynamics calibrated while chasing diffusion (see decisionLog): dialogue context carries salience and always includes the speaker's top salient recent memories (the gossip channel); hourly re-observation of co-present agents (cohabitants otherwise get one react chance per day); recency decay per sim-hour (Park's calibration); fake importance is content-tiered. Zombie-conversation bug fixed (conversations no longer attach to sleeping agents).
+Suite: 140 tests green (pg integration live).
 
-Known stand-ins pending hardware: HashEmbedder (non-semantic), fake model, DeterministicJudge. Runs using any of them are non-conforming by construction.
+## Open forks
 
-**Standing constraint (user, 2026-07-03): development happens from remote sessions — do not attempt live LLM connectivity or real database access; everything is built and tested against mocks/fixtures.** Hardware tasks (Postgres apply, Mnemosyne profile launch, gateway smoke, Postgres ledger sink) are batched for Christian to run from the home network later.
-
-## Current focus
-
-Founding decisions ratified 2026-07-03: logged-completion replay with per-model/per-role sampling config; Python sim; **from scratch — zero glasshouse code import** (patterns reimplemented from spec); Mnemosyne = inference server, sim runs on a Mac; metrics-before-agents confirmed.
-
-Town fork closed 2026-07-03: **generate once, freeze as static content.** v1 content exists and validates — Harrowmere (16 locations, 48×48 grid, 2 occluders) + 20 agent seeds + 32-edge relationship list, all in `content/`, guarded by `scripts/validate_content.py`. Awaiting Christian's rejection pass on the content itself (names, tone, tension seeds).
-
-Open fork still awaiting a call:
-
-1. **tp split on Mnemosyne:** two single-GPU models (fast+slow) vs. tp=2 one larger model. Measure in P2; default to the split.
+1. **Judge model** (believability, offline): pick a different family from the sim model — minimax-m3, deepseek-v4-flash, gemma-4-26b are available on the shelf. Decide at judge time with a rubric.
+2. **metis vs athena cost/behavior**: metis's grammar path skips thinking on structured calls (~30× cheaper); athena reasons fully. Measure both on the same run shape (telemetry is ready) and decide the default profile — and whether reasoning-on is itself an ablation condition.
 
 ## Immediate next action
 
-P1 is complete (2026-07-03): objects-with-states authored (35 objects, deterministic verb→state transitions wired through `use_object`), and the Postgres ledger sink built + integration-tested against a throwaway Postgres inside the dev container (tests auto-skip without a DB; `POLIS_TEST_DSN` overrides).
+1. **P2 gate re-run live**: the full 5-agent unscripted day via `python -m cognition.runner --ticks 8640 --agents <five> --profile metis --out-dir ...` — watch latency, failures, believability of plans/dialogue. This is the remaining P2 gate check.
+2. DB wiring completion: memory_records / completions / probes Postgres inserts alongside the ledger sink.
+3. Then the P5 path: multi-day soak, seed-sweep diffusion harness — or P4 observer in parallel.
 
-Buildable from remote next:
+Still with Christian:
 
-- P4 observer (Vite/React/R3F over exported ledger JSONL + the WebSocket sidecar; zero authority).
-- P5 prep: soak runs (multi-day fake-model headless), seed-sweep harness over the diffusion pipeline.
-- DB wiring completion: probes + memory_records + completions Postgres inserts alongside the ledger sink.
-
-Batched for Christian (home network):
-
-1. Content rejection pass (names, tone, tension seeds, 90 objects + affordances) — still pending.
-2. Postgres with pgvector anywhere: apply `services/db/schema.sql` and run one sim with `--pg-dsn` at it.
-3. Mnemosyne: launch fast/slow vLLM tiers per `services/serving/mnemosyne/*.yaml`; confirm proxy base_url in `profiles.yaml`; gateway smoke from the sim host (closes P0).
-4. Stand up the 768-dim embedder service; swap HashEmbedder out.
-5. Re-run the P2 gate harness (`cognition.runner --profile mnemosyne`) against live serving — the real "coherent day" check — and measure tp split vs tp=2 (cost telemetry is ready).
+- Content rejection pass (names, tone, tension seeds, 90 objects + affordances) — still pending.
+- Aletheia bundle rsync target (when P5 runs start producing bundles).

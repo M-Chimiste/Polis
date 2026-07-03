@@ -235,9 +235,10 @@ class CognitionRuntime:
             prompts.dialogue_turn_prompt(
                 speaker_mind.seed, listener, conv.turn,
                 [{"text": r["text"], "importance": r["importance"]} for r in retrieved],
-                conv.history))
+                conv.history),
+            prompts.UTTERANCE_SCHEMA)
         if isinstance(result, GatewayCompletion):
-            text = result.content
+            text = result.parsed["utterance"]
         else:
             speaker_mind.gateway_failures += 1
             text = "[DONE]"

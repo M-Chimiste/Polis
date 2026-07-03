@@ -78,7 +78,8 @@ class ModelGateway:
 
         max_attempts = 2 if response_schema is not None else 1
         for attempt in range(1, max_attempts + 1):
-            body: dict = {"model": model, "messages": convo, **sampling.as_request_params()}
+            body: dict = {"model": model, "messages": convo,
+                          **self.profile.request_extras, **sampling.as_request_params()}
             if response_schema is not None:
                 body["response_format"] = {
                     "type": "json_schema",
@@ -102,26 +103,47 @@ class ModelGateway:
                 )
 
             payload = resp.json()
-            content = payload["choices"][0]["message"]["content"]
+            choice = payload["choices"][0]
+            message = choice["message"]
+            content = message["content"] or ""
             last_content = content
             usage = payload.get("usage") or {}
             await self._log(role=role, call_site=call_site, attempt=attempt, request=body, response=payload)
 
             if response_schema is None:
+                # Thinking models truncated mid-reasoning return empty content
+                # with finish_reason=length — that is a failure, not an answer.
+                if not content.strip():
+                    return GatewayFailure(
+                        kind="validation", role=role, model=model,
+                        errors=[f"empty content (finish_reason={choice.get('finish_reason')})"],
+                        attempts=attempt,
+                    )
                 return GatewayCompletion(role=role, model=model, content=content, attempts=attempt, usage=usage)
 
-            try:
-                parsed = json.loads(content)
-                jsonschema.validate(parsed, response_schema)
-                return GatewayCompletion(
-                    role=role, model=model, content=content, parsed=parsed, attempts=attempt, usage=usage,
-                )
-            except (json.JSONDecodeError, jsonschema.ValidationError) as exc:
-                last_error = str(exc).splitlines()[0]
-                convo = convo + [
-                    {"role": "assistant", "content": content},
-                    {"role": "user", "content": REPAIR_PROMPT.format(error=last_error)},
-                ]
+            # Structured path. Some reasoning-parsing servers (metis, measured
+            # 2026-07-03) shunt grammar-constrained output into
+            # reasoning_content, leaving content empty: the grammar forbids the
+            # <think> block, so the parser misfiles the whole (valid) answer.
+            # Salvage is schema-gated — the validation wall still decides.
+            candidates = [content]
+            reasoning = message.get("reasoning_content") or ""
+            if not content.strip() and reasoning.strip():
+                candidates.append(reasoning)
+            for candidate in candidates:
+                try:
+                    parsed = json.loads(candidate)
+                    jsonschema.validate(parsed, response_schema)
+                    return GatewayCompletion(
+                        role=role, model=model, content=candidate, parsed=parsed,
+                        attempts=attempt, usage=usage,
+                    )
+                except (json.JSONDecodeError, jsonschema.ValidationError) as exc:
+                    last_error = str(exc).splitlines()[0]
+            convo = convo + [
+                {"role": "assistant", "content": content},
+                {"role": "user", "content": REPAIR_PROMPT.format(error=last_error)},
+            ]
 
         return GatewayFailure(
             kind="validation", role=role, model=model,

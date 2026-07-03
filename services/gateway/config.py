@@ -17,9 +17,11 @@ DEFAULT_PROFILES_PATH = pathlib.Path(__file__).resolve().parent.parent / "servin
 class SamplingConfig(BaseModel):
     """Per-role sampling. No global policy, no temperature-0 requirement.
 
-    Reasoning budget is capped server-side at vLLM launch (request-level
-    enable_thinking may be ignored — the glasshouse qwen3.6 lesson), so it
-    deliberately has no field here.
+    Reasoning control is NOT sampling: request-level enable_thinking is
+    ignored by every serving stack measured so far (vLLM at glasshouse,
+    LM Studio-class on metis/athena 2026-07-03), so it deliberately has no
+    field here. Best-effort flags like enable_thinking live in the profile's
+    request_extras; max_tokens must budget for reasoning regardless.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -52,6 +54,20 @@ class RoleConfig(BaseModel):
     sampling: SamplingConfig
 
 
+class EmbeddingConfig(BaseModel):
+    """OpenAI-compatible /v1/embeddings endpoint for the memory stream.
+
+    dim must match the pgvector column (vector(768), schema.sql) — changing
+    it is a migration, not an edit.
+    """
+
+    model_config = ConfigDict(extra="forbid", protected_namespaces=())
+
+    base_url: str
+    model: str
+    dim: int = 768
+
+
 class ServingProfile(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -59,6 +75,13 @@ class ServingProfile(BaseModel):
     base_url: str
     tiers: dict[str, TierConfig]
     roles: dict[str, RoleConfig]
+    # Merged into every request body (sampling wins on collision). Carries
+    # best-effort, server-dependent flags like enable_thinking — measured to
+    # be ignored by current serving (2026-07-03), kept for forward compat.
+    request_extras: dict = {}
+    # Optional embedder endpoint; absent → callers fall back to HashEmbedder
+    # and the run is non-conforming by construction.
+    embedding: EmbeddingConfig | None = None
 
     @model_validator(mode="after")
     def _roles_reference_real_tiers(self) -> "ServingProfile":

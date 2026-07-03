@@ -133,3 +133,27 @@ Reason: Objective and reproducible, correct for the fake-model era (utterances q
 Decision: All references to "TheseusInsight" are removed from the plan, memory bank, code comments, and serving notes. The believability judge is a generic LLM-as-judge with a rubric — model and rubric chosen at hardware time — behind the existing pluggable Judge interface. No external project's infrastructure is assumed for scoring or publication.
 
 Reason: User call. The name leaked into the drafted planning documents from unrelated older projects; nothing about POLIS depends on it and nothing project-specific was ever meant. The judge-tier design (offline, never on the hot path, pluggable) is unchanged.
+
+## 2026-07-03 — Serving topology is metis + athena; Theseus simulates; Postgres is local
+
+Decision: Supersedes "Mnemosyne serves, Macs simulate" and "Serving on Mnemosyne" in topology (their principles — sim host-portable, reasoning capped away from the request — stand). Inference is metis + athena: LM Studio-class OpenAI-compatible endpoints on :1240 over Tailscale (endpoints recorded in the untracked `.env`; profiles carry them explicitly). The sim runs on Theseus. Postgres 14 + pgvector 0.8.0 is local on Theseus (`polis` for runs, `polis_test` for the suite) — the host-agnostic DDL held: applying it elsewhere is a DSN change.
+
+Reason: This is the hardware that exists. The remote-only standing constraint is lifted: live LLM connectivity and a real database are available from the dev machine.
+
+## 2026-07-03 — Model assignment: qwen3.6-35b-a3b-mtp for both tiers; structured outputs on every call
+
+Decision: User call — qwen3.6-35b-a3b-mtp (thinking model, MTP decode) serves BOTH fast and slow tiers on both servers, for speed and ease of use. Corollary (also user call): every model call carries a response_schema — the last freeform calls (dialogue turns, probe interviews) got schemas (`{"utterance"}`, `{"answer"}`). The fast/slow tier split survives in the role mapping so a future model split is a profile edit, not a code change. Judge model remains an open fork (pick a different family — minimax-m3 / deepseek-v4-flash / gemma-4-26b are on the shelf — at believability time).
+
+Reason: One model everywhere removes cross-tier behavioral confounds and halves serving ops; schemas-everywhere is what makes thinking-model output reliable (and, via the metis grammar path, cheap).
+
+## 2026-07-03 — Thinking-model serving facts (measured) and the gateway's response
+
+Decision: Measured from Theseus against both servers: (1) request-level thinking kill switches (`enable_thinking`, `chat_template_kwargs`, `reasoning`, `reasoning_budget`, `/no_think`) are ALL ignored — the glasshouse lesson holds beyond vLLM; `request_extras: {enable_thinking: false}` is still sent best-effort. (2) Reasoning arrives in a separate `reasoning_content` field; `content` stays clean. (3) metis shunts grammar-constrained (json_schema) output entirely into `reasoning_content` with empty `content` — the grammar forbids the think block and the reasoning parser misfiles the answer; net effect: structured calls on metis skip thinking (~35 tokens/call vs athena's ~300–1000). The gateway therefore: salvages `reasoning_content` for structured calls when `content` is empty (schema-gated — the wall still decides), treats empty freeform content as a typed failure (truncation mid-reasoning is not an answer), and role budgets are ≥1024 tokens (caps sized for reasoning + answer, not spend targets).
+
+Reason: The instrument must be honest about what serving actually does. Salvage is acceptable because validation still gates every accepted payload; a server update that changes the shunt shows up as test-visible behavior, not silent corruption.
+
+## 2026-07-03 — Embedder: nomic-embed-text-v1.5 over HTTP, asymmetric prefixes
+
+Decision: `HTTPEmbedder` against the OpenAI-compatible `/v1/embeddings` on either server, model text-embedding-nomic-embed-text-v1.5, 768-dim (matches vector(768) — no migration). Documents embed with `search_document:`, retrieval queries with `search_query:` (`embed_query()` added to the Embedder protocol). HashEmbedder aliases embed_query→embed (no prefix) so pre-prefix fixtures stay byte-equal. Embedder failures raise loudly — a conforming run must never silently degrade to hash vectors.
+
+Reason: nomic v1.5 is asymmetric by design; skipping prefixes measurably degrades retrieval, and retrieval quality is research question #4's substrate. 768 was fixed in the DDL precisely so this day would be a config change.

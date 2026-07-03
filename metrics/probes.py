@@ -42,10 +42,19 @@ def knows_fact(stream: FrozenStream, fact: str, threshold: float = 0.6) -> bool:
     )
 
 
+PROBE_ANSWER_SCHEMA = {
+    "title": "probe_answer",
+    "type": "object",
+    "required": ["answer"],
+    "additionalProperties": False,
+    "properties": {"answer": {"type": "string", "minLength": 1}},
+}
+
+
 def probe_prompt(seed: dict, question: str, retrieved: list[str]) -> list[dict]:
     return prompts.with_context(
         "Answer the interviewer's question in first person, as this villager, "
-        "grounded only in the provided memories.",
+        'grounded only in the provided memories. Respond with JSON: {"answer": "..."}.',
         {"role": "probe", "agent": seed["id"], "bio": seed["bio"],
          "traits": seed["traits"], "question": question, "memories": retrieved},
     )
@@ -94,7 +103,8 @@ class ProbeRunner:
                                                  tick, self.retrieval)]
         result = await self.gateway.complete(
             agent_id, f"probe:{category or 'interview'}", "probe",
-            probe_prompt(self.seeds[agent_id], question, retrieved), tick=tick)
-        response = result.content if isinstance(result, GatewayCompletion) else ""
+            probe_prompt(self.seeds[agent_id], question, retrieved),
+            response_schema=PROBE_ANSWER_SCHEMA, tick=tick)
+        response = result.parsed["answer"] if isinstance(result, GatewayCompletion) else ""
         return self._result(agent_id, "interview", tick, question, response,
                             category=category)

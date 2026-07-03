@@ -17,7 +17,7 @@ import uuid
 import httpx
 
 from cognition.completions import CognitionGateway, CompletionLog
-from cognition.embedding import HashEmbedder
+from cognition.embedding import Embedder, HashEmbedder, HTTPEmbedder
 from cognition.fake_model import fake_model_transport
 from cognition.runtime import CognitionRuntime, Settings
 from services.gateway import ModelGateway, ServingProfile, load_profiles
@@ -59,6 +59,7 @@ async def run_cognition(
     ledger_sink=None,
     completions_sink=None,
     treatments: list[dict] | None = None,
+    embedder: Embedder | None = None,
 ) -> tuple[LedgerWriter, CognitionGateway, CognitionRuntime]:
     town = load_town()
     seeds = load_agents()
@@ -71,7 +72,8 @@ async def run_cognition(
     log = CompletionLog(run_id, sink=completions_sink)
     cog_gateway = CognitionGateway(gateway if replay_log is None else None,
                                    log, replay_from=replay_log)
-    runtime = CognitionRuntime(world, seeds, cog_gateway, HashEmbedder(), settings, run_id)
+    runtime = CognitionRuntime(world, seeds, cog_gateway, embedder or HashEmbedder(),
+                               settings, run_id)
     writer = LedgerWriter(run_id, sink=ledger_sink)
 
     # NOTE: replay must reproduce the ledger byte-equal, so nothing here may
@@ -150,6 +152,7 @@ def main() -> None:
     agent_ids = args.agents.split(",") if args.agents else None
     replay_log = None
     run_id = None
+    embedder = None
     if args.replay_dir is not None:
         lines = (args.replay_dir / "completions.jsonl").read_bytes().splitlines()
         import json as _json
@@ -157,7 +160,14 @@ def main() -> None:
         replay_log = CompletionLog.load(lines, run_id)
         gateway = None
     elif args.profile:
-        gateway = ModelGateway(load_profiles()[args.profile])
+        profile = load_profiles()[args.profile]
+        gateway = ModelGateway(profile)
+        if profile.embedding is not None:
+            embedder = HTTPEmbedder(profile.embedding.base_url, profile.embedding.model,
+                                    profile.embedding.dim)
+        else:
+            print(f"WARNING: profile '{args.profile}' has no embedding endpoint; "
+                  "falling back to HashEmbedder — run is non-conforming")
     else:
         gateway = fake_gateway()
 
@@ -176,7 +186,7 @@ def main() -> None:
             args.ticks, args.seed, agent_ids=agent_ids, run_id=run_id,
             gateway=gateway, replay_log=replay_log,
             ledger_sink=ledger_sink, completions_sink=completions_sink,
-            treatments=treatments,
+            treatments=treatments, embedder=embedder,
         ))
     with open(args.out_dir / "memories.jsonl", "wb") as memories_sink:
         export_memories(runtime, memories_sink)

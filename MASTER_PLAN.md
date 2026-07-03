@@ -1,6 +1,6 @@
 # POLIS — MASTER PLAN
 
-**Current phase:** P3 software complete — gate met (metrics + probes over run artifacts, zero sim footprint, plots produced); first measured diffusion curve exists (fake-model, non-conforming) · next: P4 observer, or hardware tasks · **Last updated:** 2026-07-03
+**Current phase:** P0 fully closed 2026-07-03 (live serving smoked from Theseus: metis+athena, qwen3.6-35b-a3b-mtp; Postgres applied locally) · P1–P3 software complete, gates met · next: P2 gate re-run live (full 5-agent day), then P4 observer or P5 soak · **Last updated:** 2026-07-03
 
 Plan-of-record. `memory_bank/` is the state-of-record for narrative and decisions. Same operating protocol as glasshouse: read MEMORY_BANK context before any task; after any task update phase boxes, phase log, dashboard, activeContext/progress/decisionLog; run tests; one commit per coherent work item.
 
@@ -22,10 +22,10 @@ boot   world  minds  measure│first  ablate
 ## P0 — Bootstrap (gate: `pytest` green on a walking skeleton)
 
 - [x] Repo scaffold: uv project, `sim/`, `cognition/`, `metrics/`, `observer/`, `schemas/`, `services/`.
-- [x] Model gateway, from scratch: validation wall + structured outputs + one repair re-prompt + named hardware profiles + **per-model/per-role sampling config** (glasshouse pattern reimplemented, zero code import) — `services/gateway/`, unit-tested against a mocked endpoint. **Pending: smoke against Mnemosyne vLLM proxy profile from the sim host (Mac).**
+- [x] Model gateway, from scratch: validation wall + structured outputs + one repair re-prompt + named hardware profiles + **per-model/per-role sampling config** (glasshouse pattern reimplemented, zero code import) — `services/gateway/`, unit-tested against a mocked endpoint. **Smoked live 2026-07-03** from Theseus against metis+athena (plain, structured, embeddings); thinking-model hardening added (request_extras, reasoning_content salvage, empty-content failure — see decisionLog).
 - [x] Schemas v0: `ledger_event`, `agent_intent`, `memory_record`, `experiment_config`, `probe_result` + `town_spec`/`agent_seed`/`relationships` formalized from content. Pydantic mirrors generated (`scripts/gen_models.sh`).
-- [ ] Postgres schema (pgvector enabled; any Postgres host — Nyx is the default, not a dependency): DDL authored in-repo (`services/db/schema.sql`: runs, agents, memory_records, plans, ledger_events, completions, probes, metrics; embedding dim 768, BERT-class). **Pending: apply to a real database.**
-- [ ] vLLM serving profiles on Mnemosyne: fast tier (8B, GPU0) + slow tier (32–70B, GPU1), reasoning capped at launch; profile configs recorded in-repo (`services/serving/`). **Pending: launch + reconcile with the vLLM manager's config format.**
+- [x] Postgres schema (pgvector enabled; any Postgres host): DDL (`services/db/schema.sql`: runs, agents, memory_records, plans, ledger_events, completions, probes, metrics; embedding dim 768) **applied 2026-07-03** to local Postgres 14 + pgvector 0.8.0 on Theseus (`polis` + `polis_test`); pg integration tests run live, no skips.
+- [x] Serving profiles — **re-scoped 2026-07-03**: the Mnemosyne vLLM plan is superseded by reality — metis + athena (LM Studio-class OpenAI-compatible endpoints, :1240 over Tailscale), qwen3.6-35b-a3b-mtp (thinking model, MTP) for BOTH tiers (user call: speed + ease), nomic-embed-text-v1.5 (768-dim) for embeddings. `services/serving/profiles.yaml` carries both profiles; `services/serving/mnemosyne/` remains as historical record.
 
 ## P1 — World core (gate: byte-equal ledger fixture across two headless runs, no LLM)
 
@@ -38,16 +38,16 @@ boot   world  minds  measure│first  ablate
 
 ## P2 — Cognition (gate: 5 agents live a coherent unscripted day; every completion logged and replayable)
 
-**Gate met 2026-07-03 on the deterministic fake model** (`tests/test_cognition_day.py`): 5 agents live a full unscripted day — plan, commute, use objects, converse, reflect, sleep — every completion logged, replay byte-equal, gateway-down degrades without crashing. The same harness must re-run against live serving when hardware is available (that re-run is the final gate check).
+**Gate met 2026-07-03 on the deterministic fake model** (`tests/test_cognition_day.py`): 5 agents live a full unscripted day — plan, commute, use objects, converse, reflect, sleep — every completion logged, replay byte-equal, gateway-down degrades without crashing. **First live smoke 2026-07-03** (2 agents, morning, `--profile metis`): 29 completions, 0 gateway failures, real plans + a real 4-turn conversation, HTTPEmbedder live. The full 5-agent-day re-run against live serving is the remaining gate check.
 
-- [x] Memory stream: write path with importance scoring (fast tier) + embedding at write (`cognition/memory.py`; deterministic uuid5 ids). **Embedder is the HashEmbedder stand-in — real 768-dim BERT-class service pending hardware; HashEmbedder runs are non-conforming by construction.**
+- [x] Memory stream: write path with importance scoring (fast tier) + embedding at write (`cognition/memory.py`; deterministic uuid5 ids). **Real embedder wired 2026-07-03:** `HTTPEmbedder` (nomic-embed-text-v1.5, 768-dim, asymmetric doc/query prefixes) via the profile `embedding:` block; HashEmbedder remains the offline stand-in (non-conforming by construction).
 - [x] Retrieval: R×I×R scorer, α/β/γ/decay/top_k in config (`cognition/retrieval.py`; min-max normalized per paper; creation-time recency decay — access-time decay noted as possible ablation). pgvector storage parity integration-tested (`tests/test_pg_memory.py`).
 - [x] Cognition runtime: plan-cache execution (cached steps = zero calls), importance-gated interrupts, react calls, gateway-down fallback per subsystem (`cognition/runtime.py`). Scheduling is deterministic (sorted-agent await order) — wall-clock overlap is a serving-time optimization that must never change sim-time semantics.
 - [x] Planning: daily agenda → lazy per-block decomposition → grounded action steps; plans stored as memory records; deterministic anchor-driven fallbacks (`cognition/planning.py`).
 - [x] Dialogue: turn loop with per-turn retrieval about the interlocutor; per-POV summaries written back as memories; hearers (including eavesdroppers, via hearing radius) get observation memories — the diffusion channel (`cognition/runtime.py`).
 - [x] Reflection: importance-sum trigger → questions → retrieve → insight records with citation edges (`cognition/runtime.py`).
 - [x] Logged-completion replay mode; replay reproduces the ledger byte-equal, run_started included (`cognition/completions.py`; failures are logged and replayed too).
-- [x] Cost telemetry per agent per sim-hour per tier (`cognition/telemetry.py`). **Pending hardware: measure tp split vs. tp=2 on Mnemosyne, record in decisionLog.**
+- [x] Cost telemetry per agent per sim-hour per tier (`cognition/telemetry.py`). **Re-scoped 2026-07-03** (tp-split question is moot without Mnemosyne): measure metis (grammar path, ~35 tok/structured call) vs athena (full reasoning, ~300–1000 tok/call) on the same run shape, record in decisionLog.
 
 ## P3 — Measurement plane (gate: metrics run against a P2 ledger and produce plots without touching sim state)
 

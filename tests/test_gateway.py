@@ -1,6 +1,7 @@
 """Gateway wall: structured outputs, one repair re-prompt, typed errors,
-per-role sampling resolution. Model side is a mocked OpenAI-compatible
-endpoint (the real smoke test against Mnemosyne is a P0 hardware task)."""
+per-role sampling resolution, thinking-model hardening (request_extras,
+reasoning_content salvage, empty-content failure). Model side is a mocked
+OpenAI-compatible endpoint; smoked live against metis/athena 2026-07-03."""
 import json
 
 import httpx
@@ -164,14 +165,21 @@ async def test_unknown_role_raises_keyerror():
 
 def test_shipped_profiles_load_and_resolve():
     profiles = load_profiles()
-    mnemosyne = profiles["mnemosyne"]
-    model, sampling = mnemosyne.resolve("dialogue")
-    assert model == "Qwen/Qwen3-8B"
-    assert sampling.temperature is not None
-    model, _ = mnemosyne.resolve("reflection")
-    assert model == "Qwen/Qwen3-32B"
-    # every role references a real tier (validated at load)
-    assert set(c.tier for c in mnemosyne.roles.values()) <= set(mnemosyne.tiers)
+    for name in ("metis", "athena"):
+        profile = profiles[name]
+        model, sampling = profile.resolve("dialogue")
+        assert model == "qwen3.6-35b-a3b-mtp"
+        assert sampling.temperature is not None
+        # thinking model: every role budgets for reasoning + answer
+        for role in profile.roles:
+            _, s = profile.resolve(role)
+            assert s.max_tokens >= 1024, f"{name}:{role} cannot fit reasoning"
+        # best-effort thinking kill switch rides on every request
+        assert profile.request_extras == {"enable_thinking": False}
+        # embedder endpoint matches the pgvector column dimension
+        assert profile.embedding is not None and profile.embedding.dim == 768
+        # every role references a real tier (validated at load)
+        assert set(c.tier for c in profile.roles.values()) <= set(profile.tiers)
 
 
 def test_role_with_unknown_tier_rejected():
@@ -181,3 +189,90 @@ def test_role_with_unknown_tier_rejected():
             tiers={"fast": {"model": "m"}},
             roles={"dialogue": {"tier": "warp", "sampling": {}}},
         )
+
+
+# --- thinking-model hardening (metis/athena measurements, 2026-07-03) ---
+
+EXTRAS_PROFILE = ServingProfile(
+    name="extras",
+    base_url="http://gateway.test/v1",
+    request_extras={"enable_thinking": False},
+    tiers={"fast": {"model": "test-8b"}},
+    roles={"importance": {"tier": "fast", "sampling": {"temperature": 0.2, "max_tokens": 1024}}},
+)
+
+
+def reasoning_response(content: str, reasoning: str, finish: str = "stop") -> httpx.Response:
+    return httpx.Response(200, json={
+        "choices": [{"finish_reason": finish,
+                     "message": {"role": "assistant", "content": content,
+                                 "reasoning_content": reasoning}}],
+        "usage": {"prompt_tokens": 10, "completion_tokens": 5},
+    })
+
+
+async def test_request_extras_ride_every_body_and_sampling_wins():
+    seen = {}
+
+    def responder(request):
+        seen["body"] = json.loads(request.content)
+        return chat_response('{"score": 7}')
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(responder),
+                               base_url=EXTRAS_PROFILE.base_url)
+    gw = ModelGateway(EXTRAS_PROFILE, http_client=client)
+    result = await gw.complete("importance", [{"role": "user", "content": "score"}],
+                               response_schema=RESPONSE_SCHEMA)
+    assert isinstance(result, GatewayCompletion)
+    assert seen["body"]["enable_thinking"] is False
+    assert seen["body"]["temperature"] == 0.2  # sampling still applied
+
+
+async def test_structured_salvage_from_reasoning_content():
+    # metis shunt: grammar-constrained JSON lands in reasoning_content,
+    # content is empty. The wall still validates before accepting.
+    def responder(request):
+        return reasoning_response("", '{"score": 6}')
+
+    gw = make_gateway(responder)
+    result = await gw.complete("importance", [{"role": "user", "content": "score"}],
+                               response_schema=RESPONSE_SCHEMA)
+    assert isinstance(result, GatewayCompletion)
+    assert result.parsed == {"score": 6}
+    assert result.attempts == 1
+
+
+async def test_salvage_still_schema_gated():
+    # invalid JSON in reasoning_content must NOT be salvaged
+    def responder(request):
+        return reasoning_response("", "let me think about the score...")
+
+    gw = make_gateway(responder)
+    result = await gw.complete("importance", [{"role": "user", "content": "score"}],
+                               response_schema=RESPONSE_SCHEMA)
+    assert isinstance(result, GatewayFailure)
+    assert result.kind == "validation"
+
+
+async def test_reasoning_never_salvaged_when_content_present():
+    # athena shape: thinking in reasoning_content, real answer in content
+    def responder(request):
+        return reasoning_response('{"score": 3}', "hmm, maybe {\"score\": 9}?")
+
+    gw = make_gateway(responder)
+    result = await gw.complete("importance", [{"role": "user", "content": "score"}],
+                               response_schema=RESPONSE_SCHEMA)
+    assert isinstance(result, GatewayCompletion)
+    assert result.parsed == {"score": 3}
+
+
+async def test_empty_freeform_content_is_failure_not_answer():
+    # truncation mid-reasoning: finish_reason=length, empty content
+    def responder(request):
+        return reasoning_response("", "I was still thinking when", finish="length")
+
+    gw = make_gateway(responder)
+    result = await gw.complete("reflection", [{"role": "user", "content": "reflect"}])
+    assert isinstance(result, GatewayFailure)
+    assert result.kind == "validation"
+    assert "length" in result.errors[0]
