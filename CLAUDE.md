@@ -30,6 +30,7 @@ python -m cognition.runner --ticks 8640 --seed 42 --agents maren_alder,piet_alde
 python -m cognition.runner --ticks 8640 --seed 42 --agents ... --profile metis --out-dir run_out      # live models (metis|athena); --pg-dsn postgresql:///polis also streams to Postgres
 python -m cognition.runner --ticks 8640 --seed 42 --agents ... --replay-dir run_out --out-dir run2    # replay from logged completions
 python -m metrics.assemble --run-dir run_out --config experiment.json --out bundle/   # P3 experiment record bundle
+./scripts/live.sh start|status|stop              # live observation: observer UI + a run with --serve-ws, one command
 ```
 
 Postgres-backed tests (`test_pg_*.py`) run against the local `polis_test` DB (skip cleanly if it's unreachable; `POLIS_TEST_DSN=postgresql://…` overrides). `TICKS_PER_DAY = 8640` (1 tick = 10 sim-seconds).

@@ -9,3 +9,4 @@ dist/
 runs/
 node_modules/
 *.tsbuildinfo
+.live/
