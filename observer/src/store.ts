@@ -3,7 +3,7 @@
 import { create } from "zustand";
 
 import {
-  LedgerEvent, WorldView, emptyWorld, treatmentFact, worldAt,
+  LedgerEvent, WorldView, applyEvent, emptyWorld, treatmentFact, worldAt,
 } from "./ledger";
 import { MemoryRecord, byAgent } from "./memories";
 
@@ -51,12 +51,15 @@ export const useObserver = create<ObserverState>((set, get) => ({
   },
 
   appendLive(event) {
-    const events = [...get().events, event];
+    // incremental fold at the head — no O(n^2) refold on a live stream
+    const state = get();
+    state.events.push(event);
+    const world = applyEvent(state.world, event);
     set({
-      events, live: true, maxTick: event.tick, cursor: event.tick,
-      fact: get().fact ?? (event.kind === "treatment_injected"
+      events: state.events, live: true, maxTick: event.tick, cursor: event.tick,
+      fact: state.fact ?? (event.kind === "treatment_injected"
         ? (event.data.fact as string) : null),
-      world: worldAt(events, event.tick),
+      world: { ...world },
     });
   },
 

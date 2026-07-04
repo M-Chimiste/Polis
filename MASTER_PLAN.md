@@ -69,7 +69,7 @@ boot   world  minds  measure│first  ablate
 - [x] Diffusion overlay (fact from `treatment_injected`; holders haloed via the probes.py-parity keyword check, live while scrubbing) and relationship-thread view (pair lines weighted by accumulated conversation; talking pairs glow). Demo data: `runs/demo_treated_fake/`.
 - [x] Replay scrubber (tick slider + play; live mode follows the stream head).
 
-Gate check (live view + scrub of a real run, human eyes on it) still open — needs a session with the sidecar up.
+**Live mode wired 2026-07-03**: `cognition.runner --serve-ws PORT` runs the zero-authority uvicorn sidecar in-process (broadcaster fan-out beside file + Postgres sinks); mid-run subscribers get the full backlog then live-tail (seq-deduped); optional `--tick-seconds` wall-clock governor for viewing pace (sim semantics and replay untouched). Gate check (live view + scrub of a real run, human eyes on it) still open — run it and look.
 
 ## P5 — First experiment (gate: a diffusion curve from ≥8 seeds, 20 agents, ≥3 sim-days, unattended)
 

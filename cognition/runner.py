@@ -61,6 +61,8 @@ async def run_cognition(
     treatments: list[dict] | None = None,
     embedder: Embedder | None = None,
     pg_sink=None,
+    on_event=None,
+    tick_seconds: float = 0.0,
 ) -> tuple[LedgerWriter, CognitionGateway, CognitionRuntime]:
     town = load_town()
     seeds = load_agents()
@@ -83,8 +85,10 @@ async def run_cognition(
     runtime = CognitionRuntime(world, seeds, cog_gateway, embedder or HashEmbedder(),
                                settings, run_id,
                                memory_hook=pg_sink.on_memory if pg_sink else None)
-    writer = LedgerWriter(run_id, sink=ledger_sink,
-                          on_event=pg_sink.on_ledger_event if pg_sink else None)
+    hooks = [h for h in (pg_sink.on_ledger_event if pg_sink else None, on_event) if h]
+    writer = LedgerWriter(
+        run_id, sink=ledger_sink,
+        on_event=(lambda e: [h(e) for h in hooks]) if hooks else None)
 
     # NOTE: replay must reproduce the ledger byte-equal, so nothing here may
     # depend on live-vs-replay; provenance lives in the experiment record
@@ -105,6 +109,10 @@ async def run_cognition(
 
     events: list = []
     for _ in range(ticks):
+        if tick_seconds > 0:
+            # wall-clock pacing for live viewing only — sim time is ticks,
+            # nothing here is recorded, replay is unaffected
+            await asyncio.sleep(tick_seconds)
         tick = world.tick
         # exogenous, explicitly-logged experimental treatments — the ONLY
         # narrative-adjacent input (prime directive)
@@ -159,6 +167,12 @@ def main() -> None:
                         help="experiment_config JSON (treatments are read from it)")
     parser.add_argument("--pg-dsn", default=None,
                         help="also persist ledger + completions + memories to Postgres")
+    parser.add_argument("--serve-ws", type=int, default=None, metavar="PORT",
+                        help="serve the live ledger stream (zero-authority sidecar) "
+                             "for the observer: ws://host:PORT/ws/ledger")
+    parser.add_argument("--tick-seconds", type=float, default=0.0,
+                        help="wall-clock pacing per tick for live viewing "
+                             "(0 = as fast as cognition allows; sim semantics unaffected)")
     args = parser.parse_args()
 
     agent_ids = args.agents.split(",") if args.agents else None
@@ -199,6 +213,21 @@ def main() -> None:
         from services.db.run_sink import PostgresRunSink
         pg_sink = PostgresRunSink(args.pg_dsn)
 
+    on_event = None
+    if args.serve_ws:
+        # zero-authority live stream: the observer watches, never writes back
+        import threading
+        import uvicorn
+        from sim.stream import LedgerBroadcaster, create_app
+        broadcaster = LedgerBroadcaster()
+        server = uvicorn.Server(uvicorn.Config(
+            create_app(broadcaster), host="0.0.0.0", port=args.serve_ws,
+            log_level="warning"))
+        threading.Thread(target=server.run, daemon=True).start()
+        on_event = broadcaster.publish
+        print(f"live ledger stream up — open the observer at:\n"
+              f"  http://localhost:5173/?ws=ws://localhost:{args.serve_ws}/ws/ledger")
+
     args.out_dir.mkdir(parents=True, exist_ok=True)
     try:
         with open(args.out_dir / "ledger.jsonl", "wb") as ledger_sink, \
@@ -208,6 +237,7 @@ def main() -> None:
                 settings=settings, gateway=gateway, replay_log=replay_log,
                 ledger_sink=ledger_sink, completions_sink=completions_sink,
                 treatments=treatments, embedder=embedder, pg_sink=pg_sink,
+                on_event=on_event, tick_seconds=args.tick_seconds,
             ))
     finally:
         if pg_sink is not None:
