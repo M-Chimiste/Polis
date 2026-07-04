@@ -10,10 +10,12 @@ import { cell } from "./Town";
 
 export function Threads() {
   const events = useObserver((s) => s.events);
-  const cursor = useObserver((s) => s.cursor);
   const world = useObserver((s) => s.world);
+  // recompute a few times per sim-hour, not per frame
+  const coarseTick = Math.floor(world.tick / 60) * 60;
 
-  const edges = useMemo(() => conversationEdges(events, cursor), [events, cursor]);
+  const edges = useMemo(() => conversationEdges(events, coarseTick),
+                        [events, coarseTick]);
   const maxWeight = Math.max(1, ...edges.values());
 
   return (

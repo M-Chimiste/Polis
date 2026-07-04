@@ -11,7 +11,7 @@ const KIND_COLORS: Record<string, string> = {
 
 export function Inspector() {
   const world = useObserver((s) => s.world);
-  const cursor = useObserver((s) => s.cursor);
+  const cursor = world.tick;
   const memories = useObserver((s) => s.memories);
   const fact = useObserver((s) => s.fact);
   const selected = useObserver((s) => s.selectedAgent);

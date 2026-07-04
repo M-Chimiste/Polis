@@ -31,8 +31,9 @@ export function skyColor(hour: number): Color {
 }
 
 export function DayNight() {
-  const cursor = useObserver((s) => s.cursor);
-  const hour = simHour(cursor);
+  const playhead = useObserver((s) => s.playhead);
+  // quantize for memo stability: ~0.6 sim-minutes per lighting step
+  const hour = Math.round(simHour(playhead) * 100) / 100;
   const el = sunElevation(hour);
 
   const { sky, sunPos, sunIntensity, ambient, moon } = useMemo(() => {

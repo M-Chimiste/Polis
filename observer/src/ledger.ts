@@ -124,14 +124,25 @@ export function applyEvent(world: WorldView, event: LedgerEvent): WorldView {
   return world;
 }
 
+/** Incremental fold: apply events[from..] with tick <= tick into `world`,
+ * returning the next unapplied index. Forward playback is O(new events);
+ * only a backward seek refolds from scratch. */
+export function foldTo(
+  events: LedgerEvent[], tick: number, world: WorldView, from = 0,
+): number {
+  let i = from;
+  while (i < events.length && events[i].tick <= tick) {
+    applyEvent(world, events[i]);
+    i += 1;
+  }
+  world.tick = tick;
+  return i;
+}
+
 /** The scrub: world state at cursor tick = fold of the prefix. */
 export function worldAt(events: LedgerEvent[], tick: number): WorldView {
   const world = emptyWorld();
-  for (const event of events) {
-    if (event.tick > tick) break;
-    applyEvent(world, event);
-  }
-  world.tick = tick;
+  foldTo(events, tick, world);
   return world;
 }
 

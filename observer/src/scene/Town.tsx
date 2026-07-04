@@ -234,8 +234,7 @@ export function Town() {
   const locations = town.locations as unknown as Location[];
   const occluders = town.occluders as unknown as Occluder[];
   const world = useObserver((s) => s.world);
-  const cursor = useObserver((s) => s.cursor);
-  const night = sunElevation(simHour(cursor)) < 0.05;
+  const night = sunElevation(simHour(world.tick)) < 0.05;
   const texture = useMemo(grassTexture, []);
 
   const occupied = useMemo(() => {

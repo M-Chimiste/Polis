@@ -6,6 +6,7 @@ import { parseLedger } from "./ledger";
 import { parseMemories } from "./memories";
 import { Agents } from "./scene/Agents";
 import { DayNight } from "./scene/DayNight";
+import { FollowCam, PlaybackDriver } from "./scene/FollowCam";
 import { Threads } from "./scene/Threads";
 import { Town } from "./scene/Town";
 import { useObserver } from "./store";
@@ -14,6 +15,11 @@ import { Scrubber } from "./ui/Scrubber";
 import { useLedgerStream } from "./ws";
 
 const WS_URL = new URLSearchParams(location.search).get("ws");
+
+function OrbitControlsUnlessFollowing() {
+  const follow = useObserver((s) => s.follow);
+  return <OrbitControls makeDefault enabled={!follow} />;
+}
 
 /** Route a dropped file by its first record's shape: ledger events carry
  * `seq`, memory records carry `importance`. */
@@ -68,11 +74,13 @@ export default function App() {
             </div>
           )}
           <Canvas camera={{ position: [4, 26, 40], fov: 42 }} shadows={false}>
+            <PlaybackDriver />
             <DayNight />
             <Town />
             <Threads />
             <Agents />
-            <OrbitControls makeDefault />
+            <FollowCam />
+            <OrbitControlsUnlessFollowing />
           </Canvas>
         </div>
         <Inspector />

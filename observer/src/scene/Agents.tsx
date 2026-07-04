@@ -1,6 +1,8 @@
-/** Agents as little people at their ledger-folded positions: capsule bodies
- * with heads, smoothly lerped, lying down while asleep, halo'd when holding
- * the seeded fact (the live diffusion overlay), amber while conversing. */
+/** Agents as little people WALKING their ledger paths: positions are
+ * sampled per frame from the movement tracks at the float playhead (fluid
+ * presentation of the exact A* routes the sim computed — no new physics),
+ * with heading rotation and a small gait bob. Halo when holding the seeded
+ * fact, amber while conversing, flat while asleep. */
 import { Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
@@ -9,6 +11,7 @@ import { Group, MathUtils } from "three";
 import { AgentView } from "../ledger";
 import { factHolders } from "../memories";
 import { useObserver } from "../store";
+import { sample } from "../tracks";
 import { cell, hash01 } from "./Town";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -22,29 +25,40 @@ function Agent({ agent, holdsFact }: { agent: AgentView; holdsFact: boolean }) {
   const selectAgent = useObserver((s) => s.selectAgent);
   const group = useRef<Group>(null);
   const body = useRef<Group>(null);
-  const [tx, tz] = cell(agent.pos[0] + 0.5, agent.pos[1] + 0.5);
   const sleeping = agent.status === "sleeping";
   const conversing = agent.conversingWith !== null;
-  // deterministic label offset so cohabitants' names don't collide
   const labelDx = (hash01(agent.id) - 0.5) * 1.1;
 
   useFrame((_, delta) => {
-    if (group.current) {
-      group.current.position.x = MathUtils.damp(group.current.position.x, tx, 8, delta);
-      group.current.position.z = MathUtils.damp(group.current.position.z, tz, 8, delta);
+    const { tracks, playhead } = useObserver.getState();
+    const track = tracks[agent.id];
+    if (!group.current || !track) return;
+    const s = sample(track, playhead);
+    const [x, z] = cell(s.pos[0] + 0.5, s.pos[1] + 0.5);
+    group.current.position.x = x;
+    group.current.position.z = z;
+    if (s.heading) {
+      const target = Math.atan2(s.heading[0], s.heading[1]);
+      // shortest-arc damp
+      const current = group.current.rotation.y;
+      let diff = target - current;
+      while (diff > Math.PI) diff -= 2 * Math.PI;
+      while (diff < -Math.PI) diff += 2 * Math.PI;
+      group.current.rotation.y = current + diff * Math.min(1, delta * 10);
     }
     if (body.current) {
-      // ease down to lying flat when asleep, back upright on waking
-      const target = sleeping ? Math.PI / 2 : 0;
-      body.current.rotation.z = MathUtils.damp(body.current.rotation.z, target, 6, delta);
+      const bob = s.moving ? Math.abs(Math.sin(playhead * 4)) * 0.08 : 0;
+      const targetRot = sleeping ? Math.PI / 2 : 0;
+      body.current.rotation.z = MathUtils.damp(
+        body.current.rotation.z, targetRot, 6, delta);
       body.current.position.y = MathUtils.damp(
-        body.current.position.y, sleeping ? 0.32 : 0.62, 6, delta);
+        body.current.position.y, (sleeping ? 0.32 : 0.62) + bob, 10, delta);
     }
   });
 
   const color = conversing ? "#e0af68" : (STATUS_COLORS[agent.status] ?? "#c0caf5");
   return (
-    <group ref={group} position={[tx, 0, tz]}>
+    <group ref={group}>
       <group ref={body} position={[0, 0.62, 0]}
              onClick={(e) => {
                e.stopPropagation();
@@ -83,11 +97,11 @@ export function Agents() {
   const world = useObserver((s) => s.world);
   const memories = useObserver((s) => s.memories);
   const fact = useObserver((s) => s.fact);
-  const cursor = useObserver((s) => s.cursor);
+  const tick = useObserver((s) => s.world.tick);
 
   const holders = useMemo(
-    () => (fact ? factHolders(memories, fact, cursor) : new Set<string>()),
-    [memories, fact, cursor],
+    () => (fact ? factHolders(memories, fact, tick) : new Set<string>()),
+    [memories, fact, tick],
   );
 
   return (
