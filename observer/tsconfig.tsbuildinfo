@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/ledger.test.ts","./src/ledger.ts","./src/main.tsx","./src/store.ts","./src/ws.ts","./src/scene/agents.tsx","./src/scene/town.tsx","./src/ui/inspector.tsx","./src/ui/scrubber.tsx"],"version":"5.9.3"}

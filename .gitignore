@@ -8,3 +8,4 @@ dist/
 .env
 runs/
 node_modules/
+*.tsbuildinfo
