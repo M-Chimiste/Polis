@@ -62,10 +62,14 @@ boot   world  minds  measure│first  ablate
 
 ## P4 — Observer (parallel after P1; gate: live view + replay scrub of a real run)
 
-- [ ] Vite/React/R3F app reading the WebSocket ledger stream and exported ledgers.
-- [ ] Town render (simple geometry, no art pipeline), agents with action labels, click → memory/plan inspector.
+**Scaffolded 2026-07-03** (`observer/`, pnpm + vitest): Ajv validation against the shared ledger_event schema, pure replay fold (world-at-tick = fold of event prefix), 6 vitest tests against the real P1 byte-equal fixture.
+
+- [x] Vite/React/R3F app reading the WebSocket ledger stream (`?ws=`) and exported ledgers (drag-and-drop JSONL).
+- [x] Town render (simple geometry from town.json, no art pipeline), agents with status colors + labels, click → inspector (agent state + event feed). **Pending: memory/plan inspector needs memories.jsonl loading.**
 - [ ] Diffusion overlay (seeded-fact holders colored) and relationship-thread view.
-- [ ] Replay scrubber.
+- [x] Replay scrubber (tick slider + play; live mode follows the stream head).
+
+Gate check (live view + scrub of a real run, human eyes on it) still open — needs a session with the sidecar up.
 
 ## P5 — First experiment (gate: a diffusion curve from ≥8 seeds, 20 agents, ≥3 sim-days, unattended)
 

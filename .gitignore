@@ -7,3 +7,4 @@ dist/
 .ruff_cache/
 .env
 runs/
+node_modules/

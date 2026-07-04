@@ -39,9 +39,12 @@ Decision (user, 2026-07-03): **proceed to P5 — the north star path.** Pre-soak
 2. ~~Crossing-request race~~ — done (2dd914b): request queue + explicit declines + refused-attach closes on ledger. Invariant tested: every started gets exactly one ended; nobody ghosted. NOTE: behavior changes mean pre-fix completion logs no longer replay byte-equal on new code.
 3. ~~DB wiring~~ — done: `services/db/run_sink.py` (one connection, three streams + probes; idempotent by deterministic keys). `cognition.runner --pg-dsn`, `metrics.assemble --pg-dsn`.
 
-Next: **soak** — 20 agents, sim-week (60480 ticks), `--profile metis --pg-dsn postgresql:///polis`, unattended overnight (~11 h). Goals: fix what breaks; calibrate interrupt/reflection thresholds against real-model importance distributions (gate day: reflection fired 168×/5 agents/day); watch for anchor gravity vs routine drift (the Alders made cross-day plans on gate day — check tomorrow's agenda picks them up). Then the ≥8-seed diffusion experiment.
+**Soak deferred to overnight (user call, 2026-07-03).** Daytime went to P5+P4 infrastructure instead:
 
-P4 observer stays parallel/deferred — not on the diffusion-curve path.
+- **P5 sweep harness built** (`experiments/sweep.py`): seed fan-out as runner subprocesses, cross-profile distribution, resume, per-seed bundles + cost, summary + diffusion overlay. Runner --config now applies full Settings. Ready to fire the ≥8-seed experiment as soon as the soak validates stability.
+- **P4 observer scaffolded** (`observer/`, pnpm/vitest): Ajv-validated ledger ingest (file drop or ?ws= live), pure replay fold + scrubber, R3F town + agents, inspector. Remaining: memories inspector, diffusion overlay, relationship threads, live gate check.
+
+Tonight: **soak** — 20 agents, sim-week (60480 ticks), `python -m cognition.runner --ticks 60480 --seed 42 --profile metis --out-dir runs/soak_week_metis_seed42 --pg-dsn postgresql:///polis`, ~11 h unattended. Goals: fix what breaks; calibrate interrupt/reflection thresholds against real-model importance distributions (gate day: reflection fired 168×/5 agents/day); watch anchor gravity vs routine drift (the Alders made cross-day plans on gate day — check tomorrow's agenda picks them up). Then the ≥8-seed diffusion experiment via the sweep harness.
 
 Still with Christian:
 

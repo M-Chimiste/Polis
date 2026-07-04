@@ -38,7 +38,7 @@ Do **not** re-run `scripts/generate_content.py`: it regenerates from scratch and
 
 Do **not** hand-edit `schemas/models/` — it is generated. Edit the JSON Schema in `schemas/json/` (the source of truth) and run `./scripts/gen_models.sh`.
 
-The observer (P4, not started) will use `vitest`.
+The observer (`observer/`, P4 scaffold) is pnpm-managed: `pnpm dev` / `pnpm test` (vitest) / `pnpm build` from `observer/`. It Ajv-validates every event against `schemas/json/ledger_event.schema.json` and its vitest suite runs against the real P1 fixture — schema or fixture changes surface there too.
 
 ## The prime directive: no narrative injection
 
