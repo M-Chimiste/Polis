@@ -184,12 +184,15 @@ def main() -> None:
         gateway = fake_gateway()
 
     treatments = None
+    settings = None
     if args.config:
         import json as _json
         config = _json.loads(args.config.read_text())
         import schemas as _schemas
         _schemas.validate("experiment_config", config)
         treatments = config.get("treatments")
+        # the config IS the experiment: thresholds/retrieval/perception apply
+        settings = Settings.from_experiment_config(config)
 
     pg_sink = None
     if args.pg_dsn:
@@ -202,7 +205,7 @@ def main() -> None:
              open(args.out_dir / "completions.jsonl", "wb") as completions_sink:
             writer, cog_gateway, runtime = asyncio.run(run_cognition(
                 args.ticks, args.seed, agent_ids=agent_ids, run_id=run_id,
-                gateway=gateway, replay_log=replay_log,
+                settings=settings, gateway=gateway, replay_log=replay_log,
                 ledger_sink=ledger_sink, completions_sink=completions_sink,
                 treatments=treatments, embedder=embedder, pg_sink=pg_sink,
             ))
