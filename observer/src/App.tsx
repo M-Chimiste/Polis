@@ -67,7 +67,7 @@ export default function App() {
               drop memories.jsonl for the mind inspector + diffusion overlay
             </div>
           )}
-          <Canvas camera={{ position: [0, 42, 34], fov: 45 }}>
+          <Canvas camera={{ position: [4, 26, 40], fov: 42 }} shadows={false}>
             <DayNight />
             <Town />
             <Threads />

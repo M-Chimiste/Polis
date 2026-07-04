@@ -1,5 +1,7 @@
 /** Sim-time-driven lighting: the sun follows the cursor's clock. Pure
- * function of the tick — scrubbing to dawn always gives you dawn. */
+ * function of the tick — scrubbing to dawn always gives you dawn. Night is
+ * moonlit and readable, never a void; lit windows carry the warmth. */
+import { Stars } from "@react-three/drei";
 import { useMemo } from "react";
 import { Color } from "three";
 
@@ -14,7 +16,7 @@ export function sunElevation(hour: number): number {
   return Math.sin(((hour - 6) / 12) * Math.PI);
 }
 
-const NIGHT_SKY = new Color("#0b0e1a");
+const NIGHT_SKY = new Color("#141a2e");
 const DAY_SKY = new Color("#7aa5c4");
 const DAWN_SKY = new Color("#c4886a");
 
@@ -33,24 +35,28 @@ export function DayNight() {
   const hour = simHour(cursor);
   const el = sunElevation(hour);
 
-  const { sky, sunPos, sunIntensity, ambient } = useMemo(() => {
+  const { sky, sunPos, sunIntensity, ambient, moon } = useMemo(() => {
     const angle = ((hour - 6) / 12) * Math.PI; // 06:00 east horizon, 18:00 west
     return {
       sky: skyColor(hour),
       sunPos: [Math.cos(angle) * 60, Math.max(2, Math.sin(angle) * 60), 12] as
         [number, number, number],
-      sunIntensity: Math.max(0, el) * 1.4,
-      ambient: 0.12 + Math.max(0, el) * 0.55,
+      sunIntensity: Math.max(0, el) * 1.35,
+      // night floor keeps the town readable: shapes visible, windows do the mood
+      ambient: 0.34 + Math.max(0, el) * 0.5,
+      moon: 0.42 * Math.max(0.25, -el),
     };
   }, [hour, el]);
 
   return (
     <>
       <color attach="background" args={[sky]} />
-      <ambientLight intensity={ambient} />
-      <directionalLight position={sunPos} intensity={sunIntensity} color="#fff2dd" />
-      {/* moonlight floor so the night is readable, not black */}
-      <directionalLight position={[-20, 30, -10]} intensity={0.12} color="#8899cc" />
+      <fog attach="fog" args={[sky, 70, 190]} />
+      {el < 0.08 && <Stars radius={130} depth={40} count={1600} factor={3}
+                           saturation={0} fade speed={0.4} />}
+      <ambientLight intensity={ambient} color={el > 0 ? "#fff6e8" : "#b8c4e8"} />
+      <directionalLight position={sunPos} intensity={sunIntensity} color="#ffe9c4" />
+      <directionalLight position={[-24, 34, -14]} intensity={moon} color="#93a4d6" />
     </>
   );
 }
