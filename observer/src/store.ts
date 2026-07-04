@@ -1,11 +1,16 @@
-/** Zustand store: loaded ledger, scrub cursor, live-stream state.
+/** Zustand store: loaded ledger + memories, scrub cursor, live-stream state.
  * All read-only with respect to the sim — zero authority by construction. */
 import { create } from "zustand";
 
-import { LedgerEvent, WorldView, emptyWorld, worldAt } from "./ledger";
+import {
+  LedgerEvent, WorldView, emptyWorld, treatmentFact, worldAt,
+} from "./ledger";
+import { MemoryRecord, byAgent } from "./memories";
 
 interface ObserverState {
   events: LedgerEvent[];
+  memories: Record<string, MemoryRecord[]>;
+  fact: string | null; // seeded fact from treatment_injected, if any
   cursor: number; // tick
   maxTick: number;
   world: WorldView;
@@ -14,6 +19,7 @@ interface ObserverState {
   selectedAgent: string | null;
 
   loadEvents(events: LedgerEvent[]): void;
+  loadMemories(records: MemoryRecord[]): void;
   appendLive(event: LedgerEvent): void;
   scrub(tick: number): void;
   setPlaying(playing: boolean): void;
@@ -22,6 +28,8 @@ interface ObserverState {
 
 export const useObserver = create<ObserverState>((set, get) => ({
   events: [],
+  memories: {},
+  fact: null,
   cursor: 0,
   maxTick: 0,
   world: emptyWorld(),
@@ -33,14 +41,21 @@ export const useObserver = create<ObserverState>((set, get) => ({
     const maxTick = events.length ? events[events.length - 1].tick : 0;
     set({
       events, maxTick, cursor: maxTick, live: false, playing: false,
+      fact: treatmentFact(events),
       world: worldAt(events, maxTick),
     });
+  },
+
+  loadMemories(records) {
+    set({ memories: byAgent(records) });
   },
 
   appendLive(event) {
     const events = [...get().events, event];
     set({
       events, live: true, maxTick: event.tick, cursor: event.tick,
+      fact: get().fact ?? (event.kind === "treatment_injected"
+        ? (event.data.fact as string) : null),
       world: worldAt(events, event.tick),
     });
   },

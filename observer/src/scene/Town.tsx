@@ -11,6 +11,12 @@ interface Location {
   door: [number, number];
 }
 
+interface Occluder {
+  id: string;
+  at: [number, number];
+  radius: number;
+}
+
 const KIND_COLORS: Record<string, string> = {
   public: "#3a4a5a",
   commercial: "#4a3a2a",
@@ -27,12 +33,22 @@ export function cell(x: number, y: number): [number, number] {
 
 export function Town() {
   const locations = town.locations as unknown as Location[];
+  const occluders = town.occluders as unknown as Occluder[];
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
         <planeGeometry args={[GRID.w, GRID.h]} />
         <meshStandardMaterial color="#1a2418" />
       </mesh>
+      {occluders.map((occ) => {
+        const [ox, oz] = cell(occ.at[0] + 0.5, occ.at[1] + 0.5);
+        return (
+          <mesh key={occ.id} position={[ox, occ.radius, oz]}>
+            <cylinderGeometry args={[occ.radius * 0.6, occ.radius, occ.radius * 2, 10]} />
+            <meshStandardMaterial color="#31402e" />
+          </mesh>
+        );
+      })}
       {locations.map((loc) => {
         const [x, y, w, h] = loc.rect;
         const [cx, cz] = cell(x + w / 2, y + h / 2);

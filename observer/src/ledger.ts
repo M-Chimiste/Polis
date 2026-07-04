@@ -134,3 +134,24 @@ export function worldAt(events: LedgerEvent[], tick: number): WorldView {
   world.tick = tick;
   return world;
 }
+
+/** Relationship threads: utterances exchanged per (sorted) agent pair up to
+ * the cursor — the observer-side shadow of metrics/graph.py's edge weights. */
+export function conversationEdges(
+  events: LedgerEvent[], tick: number,
+): Map<string, number> {
+  const edges = new Map<string, number>();
+  for (const event of events) {
+    if (event.tick > tick) break;
+    if (event.kind !== "utterance" || !event.agent_id) continue;
+    const pair = [event.agent_id, event.data.partner as string].sort().join("|");
+    edges.set(pair, (edges.get(pair) ?? 0) + 1);
+  }
+  return edges;
+}
+
+/** The seeded fact, if this run was treated (diffusion overlay input). */
+export function treatmentFact(events: LedgerEvent[]): string | null {
+  const treatment = events.find((e) => e.kind === "treatment_injected");
+  return treatment ? (treatment.data.fact as string) : null;
+}
